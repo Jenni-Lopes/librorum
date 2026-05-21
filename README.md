@@ -1,2 +1,3 @@
 # librorum
-Trabalho final de programação web
+O Librorum é uma plataforma web voltada para a descoberta de obras literárias, organização de leituras e interação social entre leitores. Seu principal objetivo é funcionar como um catálogo pessoal e uma comunidade, permitindo que os usuários encontrem novos livros, registrem suas opiniões e gerenciem seus hábitos de leitura. Assim que o usuário acessa o sistema, a tela inicial exibe um catálogo em formato de vitrine, trazendo sugestões de livros de forma totalmente personalizada com base nos gostos e no histórico de cada perfil. O grande diferencial do produto é a aba de "Metas de Leitura", uma ferramenta de gamificação e motivação onde o usuário pode estabelecer e acompanhar objetivos pessoais de forma clara (como, por exemplo, "Ler 1 livro por mês").
+
