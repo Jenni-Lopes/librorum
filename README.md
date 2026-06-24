@@ -40,4 +40,4 @@ npm run dev
 
 - Jennifer Lopes
 - Júlia Garcia
-- Yasmin Araújo
+- Yasmin Araújo 
