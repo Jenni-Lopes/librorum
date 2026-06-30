@@ -2,7 +2,7 @@ import Image from "next/image";
 
 export default function Sidebar() {
   return (
-    <aside className="w-80 bg-[#0F0C18] border-r border-[#3b2d63] flex flex-col p-6 h-full flex-shrink-0">
+    <aside className="w-80 bg-[#0F0C18] border-r border-[#3b2d63] flex flex-col p-6 h-full shrink-0">
       
       {/* Logo */}
       <div className="flex items-center justify-center mb-8">
@@ -16,7 +16,7 @@ export default function Sidebar() {
         />
       </div>
 
-      {/* Navigation Menu */}
+      {/* Menu */}
       <nav className="flex flex-col gap-2">
         <button className="bg-[#271E42] text-[#8c52ff] border border-[#3b2d63] rounded-xl px-4 py-3 flex items-center gap-3 w-full text-left font-lexend font-medium transition-all cursor-pointer">
           <Image
@@ -71,7 +71,7 @@ export default function Sidebar() {
         </div>
         <div className="flex items-center gap-3 mt-2">
           <div className="w-full bg-[#271E42] rounded-full h-2 overflow-hidden">
-            <div className="bg-gradient-to-r from-[#00E5FF] to-[#8c52ff] h-full rounded-full" style={{ width: '100%' }}></div>
+            <div className="bg-linear-to-r from-[#00E5FF] to-[#8c52ff] h-full rounded-full" style={{ width: '100%' }}></div>
           </div>
           <span className="text-xs text-[#A5A1B8] font-spartan font-semibold">100%</span>
         </div>
@@ -85,18 +85,18 @@ export default function Sidebar() {
         </div>
         
         <div className="flex gap-4">
-          {/* Book Cover */}
-          <div className="w-16 h-24 rounded-lg relative overflow-hidden flex-shrink-0 border border-[#3b2d63] shadow-md">
+          {/* capa livro */}
+          <div className="w-16 h-24 rounded-lg relative overflow-hidden shrink-0 border border-[#3b2d63] shadow-md">
             <Image
               src="/imagens/éAssimQueAcaba.webp"
-              alt="Capa - É assim que acaba"
+              alt="É assim que acaba"
               fill
               sizes="64px"
               className="object-cover"
             />
           </div>
           
-          <div className="flex flex-col justify-between flex-grow">
+          <div className="flex flex-col justify-between grow">
             <div>
               <h4 className="text-sm font-semibold text-white font-lexend line-clamp-1">É assim que acaba</h4>
               <p className="text-xs text-[#A5A1B8] font-spartan mt-0.5">Colleen Hoover</p>
@@ -104,7 +104,7 @@ export default function Sidebar() {
             <div className="mt-2">
               <p className="text-[10px] text-[#A5A1B8] font-spartan font-semibold">100% concluído</p>
               <div className="w-full bg-[#271E42] rounded-full h-1.5 mt-1 overflow-hidden">
-                <div className="bg-gradient-to-r from-[#00E5FF] to-[#8c52ff] h-full rounded-full" style={{ width: '100%' }}></div>
+                <div className="bg-linear-to-r from-[#00E5FF] to-[#8c52ff] h-full rounded-full" style={{ width: '100%' }}></div>
               </div>
             </div>
           </div>
@@ -117,10 +117,14 @@ export default function Sidebar() {
 
       {/* Sair */}
       <div className="mt-auto pt-6 flex justify-center">
-        <button className="text-[#A5A1B8] hover:text-[#8c52ff] p-2 rounded-lg hover:bg-[#1c172d] transition-all cursor-pointer" title="Sair">
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-          </svg>
+        <button className="text-[#A5A1B8] hover:text-[#8c52ff] p-3 rounded-xl hover:bg-[#1c172d] transition-all cursor-pointer" title="Sair">
+          <Image
+            src="/imagens/iconSair.png"
+            alt="Sair"
+            width={40}
+            height={40}
+            className="w-8 h-8 object-contain opacity-70 hover:opacity-100 transition-opacity"
+          />
         </button>
       </div>
 
