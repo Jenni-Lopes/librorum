@@ -1,15 +1,21 @@
+"use client";
+
+import { useState } from "react";
 import Image from "next/image";
-import { Mail, Lock, Eye } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 
 export default function LoginPage() {
+  const [showPassword, setShowPassword] = useState(false);
+
   return (
     <div className="flex flex-col items-center w-full">
       <Image
         src="/icones/logoLogin.png"
-        alt=""
+        alt="Logo Librorum"
         width={360}
         height={310}
-        className="mb-8 flex items-center"
+        priority
+        className="mb-8"
       />
 
       <h2 className="font-lexend text-5xl font-semibold text-[#F5F3FF] text-center mb-6">
@@ -22,7 +28,6 @@ export default function LoginPage() {
             E-mail
           </label>
           <div className="relative flex items-center w-full">
-            {/* Ícone de Cartinha (E-mail) */}
             <Mail className="absolute left-6 text-[#A1A1AA] w-6 h-6 pointer-events-none" />
 
             <input
@@ -41,16 +46,17 @@ export default function LoginPage() {
             <Lock className="absolute left-6 text-[#A1A1AA] w-6 h-6 pointer-events-none" />
 
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               placeholder="senha"
               className="font-spartan text-lg w-full pl-14 pr-12 py-3 bg-transparent border-2 border-[#8B5CF6]/60 rounded-xl text-white placeholder-[#A1A1AA] outline-none transition-all duration-300 drop-shadow-[3px_3px_20px_rgba(124,58,237,0.3)] focus:border-[#a78bfa]"
             />
 
             <button
               type="button"
+              onClick={() => setShowPassword(!showPassword)}
               className="absolute right-4 text-[#A1A1AA] hover:text-white transition-colors"
             >
-              <Eye className="w-6 h-6" />
+              {showPassword ? <EyeOff className="w-6 h-6" /> : <Eye className="w-6 h-6" />}
             </button>
           </div>
         </div>
