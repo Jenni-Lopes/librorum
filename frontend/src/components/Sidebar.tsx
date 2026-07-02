@@ -117,7 +117,9 @@ export default function Sidebar() {
 
       {/* Sair */}
       <div className="mt-auto pt-6 flex justify-center">
-        <button className="text-[#A5A1B8] hover:text-[#8c52ff] p-3 rounded-xl hover:bg-[#1c172d] transition-all cursor-pointer" title="Sair">
+        <button 
+          className="text-[#A5A1B8] hover:text-[#8c52ff] p-3 rounded-xl hover:bg-[#1c172d] transition-all cursor-pointer" 
+          title="Sair">
           <Image
             src="/imagens/iconSair.png"
             alt="Sair"
