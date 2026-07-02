@@ -1,8 +1,9 @@
 import Image from "next/image";
+import LogoutButton from "./sair";
 
 export default function Sidebar() {
   return (
-    <aside className="w-80 bg-[#0F0C18] border-r border-[#3b2d63] flex flex-col p-6 h-full shrink-0">
+    <aside className="w-80 bg-[#0F0C18] border-r border-[#3b2d63] flex flex-col p-6 h-screen overflow-y-auto no-scrollbar shrink-0">
       
       {/* Logo */}
       <div className="flex items-center justify-center mb-8">
@@ -117,17 +118,7 @@ export default function Sidebar() {
 
       {/* Sair */}
       <div className="mt-auto pt-6 flex justify-center">
-        <button 
-          className="text-[#A5A1B8] hover:text-[#8c52ff] p-3 rounded-xl hover:bg-[#1c172d] transition-all cursor-pointer" 
-          title="Sair">
-          <Image
-            src="/imagens/iconSair.png"
-            alt="Sair"
-            width={40}
-            height={40}
-            className="w-8 h-8 object-contain opacity-70 hover:opacity-100 transition-opacity"
-          />
-        </button>
+        <LogoutButton />
       </div>
 
     </aside>
