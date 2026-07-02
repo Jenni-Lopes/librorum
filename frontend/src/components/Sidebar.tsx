@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import LogoutButton from "./sair";
 
 export default function Sidebar() {
@@ -111,9 +112,12 @@ export default function Sidebar() {
           </div>
         </div>
 
-        <button className="w-full bg-[#8c52ff] hover:bg-[#7a44eb] text-white font-lexend font-semibold text-xs py-2.5 px-4 rounded-xl transition-all shadow-[0_4px_12px_rgba(140,82,255,0.25)] hover:shadow-[0_4px_16px_rgba(140,82,255,0.4)] cursor-pointer">
+        <Link 
+          href="/livro/e-assim-que-acaba"
+          className="w-full bg-[#8c52ff] hover:bg-[#7a44eb] text-white font-lexend font-semibold text-xs py-2.5 px-4 rounded-xl transition-all shadow-[0_4px_12px_rgba(140,82,255,0.25)] hover:shadow-[0_4px_16px_rgba(140,82,255,0.4)] cursor-pointer text-center"
+        >
           Continuar leitura
-        </button>
+        </Link>
       </div>
 
       {/* Sair */}

@@ -1,6 +1,23 @@
 import Image from "next/image";
+import Link from "next/link";
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
+
+const emAltaBooks = [
+  { id: "e-assim-que-acaba", title: "É assim que acaba", author: "Colleen Hoover", rating: "5.0", cover: "/imagens/éAssimQueAcaba.webp" },
+  { id: "39gDEAAAQBAJ", title: "Verity", author: "Colleen Hoover", rating: "4.8", cover: "https://books.google.com/books/content?id=39gDEAAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" },
+  { id: "W1l_DwAAQBAJ", title: "Todas as suas imperfeições", author: "Colleen Hoover", rating: "4.7", cover: "https://books.google.com/books/content?id=W1l_DwAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" },
+  { id: "1_G1DwAAQBAJ", title: "O lado feio do amor", author: "Colleen Hoover", rating: "4.6", cover: "https://books.google.com/books/content?id=1_G1DwAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" },
+  { id: "J8pFEAAAQBAJ", title: "É assim que começa", author: "Colleen Hoover", rating: "4.9", cover: "https://books.google.com/books/content?id=J8pFEAAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" }
+];
+
+const recomendadoBooks = [
+  { id: "K1iEDwAAQBAJ", title: "A Paciente Silenciosa", author: "Alex Michaelides", rating: "4.7", cover: "https://books.google.com/books/content?id=K1iEDwAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" },
+  { id: "zFDtDwAAQBAJ", title: "A Biblioteca da Meia-Noite", author: "Matt Haig", rating: "4.8", cover: "https://books.google.com/books/content?id=zFDtDwAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" },
+  { id: "C0lGDwAAQBAJ", title: "O Homem de Giz", author: "C. J. Tudor", rating: "4.5", cover: "https://books.google.com/books/content?id=C0lGDwAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" },
+  { id: "u3hGDwAAQBAJ", title: "Flores para Algernon", author: "Daniel Keyes", rating: "4.9", cover: "https://books.google.com/books/content?id=u3hGDwAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" },
+  { id: "3R9CDAAAQBAJ", title: "Mentirosos", author: "E. Lockhart", rating: "4.4", cover: "https://books.google.com/books/content?id=3R9CDAAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" }
+];
 
 export default function Home() {
   return (
@@ -9,7 +26,7 @@ export default function Home() {
       <Sidebar />
 
       {/* Main */}
-      <div className="flex-1 p-8 overflow-y-auto h-full flex flex-col bg-[#15131D]">
+      <div className="flex-1 p-8 overflow-y-auto h-full flex flex-col bg-[#15131D] no-scrollbar">
         
         {/* Header */}
         <Header />
@@ -37,13 +54,17 @@ export default function Home() {
 
           {/* Cards Grid */}
           <div className="grid grid-cols-5 gap-6">
-            {[1, 2, 3, 4, 5].map((cardId) => (
-              <div key={cardId} className="bg-[#181424] border border-[#3b2d63] rounded-2xl p-4 hover:border-[#8c52ff] hover:bg-[#1f1a30] transition-all cursor-pointer shadow-lg flex flex-col">
+            {emAltaBooks.map((book) => (
+              <Link 
+                href={`/livro/${book.id}`} 
+                key={book.id} 
+                className="bg-[#181424] border border-[#3b2d63] rounded-2xl p-4 hover:border-[#8c52ff] hover:bg-[#1f1a30] transition-all cursor-pointer shadow-lg flex flex-col group"
+              >
                 {/* Capa do Livro */}
-                <div className="relative aspect-2/3 w-full max-w-40 mx-auto rounded-xl overflow-hidden border border-[#3b2d63]/50 shadow-md">
+                <div className="relative aspect-2/3 w-full max-w-40 mx-auto rounded-xl overflow-hidden border border-[#3b2d63]/50 shadow-md group-hover:scale-[1.02] transition-transform duration-200">
                   <Image
-                    src="/imagens/éAssimQueAcaba.webp"
-                    alt="É assim que acaba"
+                    src={book.cover}
+                    alt={book.title}
                     fill
                     sizes="(max-width: 768px) 100vw, 200px"
                     className="object-cover"
@@ -51,11 +72,11 @@ export default function Home() {
                 </div>
                 
                 {/* info */}
-                <h3 className="text-base font-lexend font-medium text-white mt-3 line-clamp-1">
-                  É assim que acaba
+                <h3 className="text-base font-lexend font-medium text-white mt-3 line-clamp-1 group-hover:text-[#8c52ff] transition-colors">
+                  {book.title}
                 </h3>
                 <p className="text-sm text-[#A5A1B8] font-spartan mt-1">
-                  Colleen Hoover
+                  {book.author}
                 </p>
                 
                 {/* avaliação */}
@@ -67,9 +88,9 @@ export default function Home() {
                     height={24}
                     className="w-6 h-6 object-contain"
                   />
-                  <span className="text-base text-[#A5A1B8] font-lexend">5.0</span>
+                  <span className="text-base text-[#A5A1B8] font-lexend">{book.rating}</span>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </section>
@@ -90,15 +111,19 @@ export default function Home() {
             <a href="#" className="text-sm font-semibold text-[#8c52ff] hover:underline font-spartan">Ver todos</a>
           </div>
 
-          {/* Cards */}
+          {/* Cards Grid */}
           <div className="grid grid-cols-5 gap-6">
-            {[1, 2, 3, 4, 5].map((cardId) => (
-              <div key={cardId} className="bg-[#181424] border border-[#3b2d63] rounded-2xl p-4 hover:border-[#8c52ff] hover:bg-[#1f1a30] transition-all cursor-pointer shadow-lg flex flex-col">
+            {recomendadoBooks.map((book) => (
+              <Link 
+                href={`/livro/${book.id}`} 
+                key={book.id} 
+                className="bg-[#181424] border border-[#3b2d63] rounded-2xl p-4 hover:border-[#8c52ff] hover:bg-[#1f1a30] transition-all cursor-pointer shadow-lg flex flex-col group"
+              >
                 {/* Capa do Livro */}
-                <div className="relative aspect-2/3 w-full max-w-40 mx-auto rounded-xl overflow-hidden border border-[#3b2d63]/50 shadow-md">
+                <div className="relative aspect-2/3 w-full max-w-40 mx-auto rounded-xl overflow-hidden border border-[#3b2d63]/50 shadow-md group-hover:scale-[1.02] transition-transform duration-200">
                   <Image
-                    src="/imagens/éAssimQueAcaba.webp"
-                    alt="É assim que acaba"
+                    src={book.cover}
+                    alt={book.title}
                     fill
                     sizes="(max-width: 768px) 100vw, 200px"
                     className="object-cover"
@@ -106,11 +131,11 @@ export default function Home() {
                 </div>
                 
                 {/* info */}
-                <h3 className="text-base font-lexend font-medium text-white mt-3 line-clamp-1">
-                  É assim que acaba
+                <h3 className="text-base font-lexend font-medium text-white mt-3 line-clamp-1 group-hover:text-[#8c52ff] transition-colors">
+                  {book.title}
                 </h3>
                 <p className="text-sm text-[#A5A1B8] font-spartan mt-1">
-                  Colleen Hoover
+                  {book.author}
                 </p>
                 
                 {/* avaliação */}
@@ -122,9 +147,9 @@ export default function Home() {
                     height={24}
                     className="w-6 h-6 object-contain"
                   />
-                  <span className="text-base text-[#A5A1B8] font-lexend">5.0</span>
+                  <span className="text-base text-[#A5A1B8] font-lexend">{book.rating}</span>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </section>
