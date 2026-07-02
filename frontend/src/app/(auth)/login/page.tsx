@@ -1,11 +1,45 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
+import { loginSchema } from "@/schemas/login.schema";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { login } from "@/services/auth.service";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
+
+  const handleSubmit = async(e: React.SyntheticEvent) => {
+  
+          const router = useRouter();
+          e.preventDefault();
+  
+          const result = loginSchema.safeParse({
+              email,
+              senha,
+          });
+  
+          if(!result.success){
+              toast.error(result.error.issues[0].message);
+              return;
+          }
+  
+          try {
+              await login({email,senha});
+              toast.success("Login feito com sucesso");
+              router.push("/");
+
+              router.refresh
+  
+          } catch (error){
+              toast.error("Usuário ou senha inválidos");
+          }
+  
+      }
 
   return (
     <div className="flex flex-col items-center w-full">
@@ -22,7 +56,7 @@ export default function LoginPage() {
         LOGIN
       </h2>
 
-      <form className="max-w-md w-full flex flex-col items-center space-y-4">
+      <form className="max-w-md w-full flex flex-col items-center space-y-4" onSubmit={handleSubmit}>
         <div className="w-full">
           <label className="font-spartan block text-3xl font-regular text-[#F5F3FF] mb-1">
             E-mail
@@ -32,6 +66,8 @@ export default function LoginPage() {
 
             <input
               type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               placeholder="nome@gmail.com"
               className="font-spartan text-lg w-full pl-14 pr-4 py-3 bg-transparent border-2 border-[#8B5CF6]/60 rounded-xl text-white placeholder-[#A1A1AA] outline-none transition-all duration-300 drop-shadow-[3px_3px_20px_rgba(124,58,237,0.3)] focus:border-[#a78bfa]"
             />
@@ -47,6 +83,8 @@ export default function LoginPage() {
 
             <input
               type={showPassword ? "text" : "password"}
+              value={senha}
+              onChange={(e) => setSenha(e.target.value)}
               placeholder="senha"
               className="font-spartan text-lg w-full pl-14 pr-12 py-3 bg-transparent border-2 border-[#8B5CF6]/60 rounded-xl text-white placeholder-[#A1A1AA] outline-none transition-all duration-300 drop-shadow-[3px_3px_20px_rgba(124,58,237,0.3)] focus:border-[#a78bfa]"
             />
