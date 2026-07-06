@@ -6,4 +6,9 @@ export interface LoginDTO
 
 export interface LoginResponse {
   token: string;
+  user: {
+    id: number;
+    nome: string;
+    email: string;
+  };
 }

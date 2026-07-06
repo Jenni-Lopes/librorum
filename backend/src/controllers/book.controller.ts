@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { searchBooks } from "../services/book.service";
+import { searchBookById, searchBooks } from "../services/book.service";
 
 export async function buscarLivro(req: Request, res: Response) {
     try {
@@ -19,6 +19,20 @@ export async function buscarLivro(req: Request, res: Response) {
 
         return res.status(500).json({
             erro: "Erro ao buscar livros."
+        });
+    }
+}
+
+export async function buscarLivroPorId(req: Request, res: Response) {
+    try {
+        const livro = await searchBookById(String(req.params.id));
+
+        return res.json(livro);
+    } catch (error) {
+        console.error(error);
+
+        return res.status(404).json({
+            erro: "Livro não encontrado."
         });
     }
 }

@@ -1,7 +1,11 @@
+"use client";
+
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
+import { buscarLivros, Livro } from "@/services/book";
 
 const emAltaBooks = [
   { id: "e-assim-que-acaba", title: "É assim que acaba", author: "Colleen Hoover", rating: "5.0", cover: "/imagens/éAssimQueAcaba.webp" },
@@ -20,6 +24,33 @@ const recomendadoBooks = [
 ];
 
 export default function Home() {
+  const [busca, setBusca] = useState("");
+  const [resultados, setResultados] = useState<Livro[]>([]);
+  const [carregando, setCarregando] = useState(false);
+  const [erro, setErro] = useState("");
+
+  async function pesquisarLivros() {
+    const termo = busca.trim();
+
+    if (!termo) {
+      setResultados([]);
+      setErro("");
+      return;
+    }
+
+    try {
+      setCarregando(true);
+      setErro("");
+      const livros = await buscarLivros(termo);
+      setResultados(livros);
+    } catch {
+      setErro("Não foi possível buscar livros agora.");
+      setResultados([]);
+    } finally {
+      setCarregando(false);
+    }
+  }
+
   return (
     <main className="flex h-screen w-full overflow-hidden bg-[#15131D] text-[#F5F3FF]">
       {/* Sidebar */}
@@ -29,12 +60,74 @@ export default function Home() {
       <div className="flex-1 p-8 overflow-y-auto h-full flex flex-col bg-[#15131D] no-scrollbar">
         
         {/* Header */}
-        <Header />
+        <Header
+          busca={busca}
+          setBusca={setBusca}
+          pesquisarLivros={pesquisarLivros}
+        />
 
         <section className="mb-8">
           <h1 className="text-4xl font-bold font-lexend text-[#F5F3FF]">Oi, @Laura!</h1>
           <p className="text-base text-[#A5A1B8] font-spartan mt-1">Continue sua jornada literária.</p>
         </section>
+
+        {(carregando || erro || resultados.length > 0) && (
+          <section className="mb-8">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-lg font-bold font-lexend text-white uppercase tracking-wider">
+                Resultado da busca
+              </h2>
+              {resultados.length > 0 && (
+                <span className="text-sm text-[#A5A1B8] font-spartan">
+                  {resultados.length} livros encontrados
+                </span>
+              )}
+            </div>
+
+            {carregando && (
+              <p className="text-sm text-[#A5A1B8] font-spartan">Buscando livros...</p>
+            )}
+
+            {erro && (
+              <p className="text-sm text-red-300 font-spartan">{erro}</p>
+            )}
+
+            {!carregando && !erro && (
+              <div className="grid grid-cols-5 gap-6">
+                {resultados.map((book) => (
+                  <Link
+                    href={`/livro/${book.id}`}
+                    key={book.id}
+                    className="bg-[#181424] border border-[#3b2d63] rounded-2xl p-4 hover:border-[#8c52ff] hover:bg-[#1f1a30] transition-all cursor-pointer shadow-lg flex flex-col group"
+                  >
+                    <div className="relative aspect-2/3 w-full max-w-40 mx-auto rounded-xl overflow-hidden border border-[#3b2d63]/50 shadow-md group-hover:scale-[1.02] transition-transform duration-200 bg-[#271E42]">
+                      {book.capa ? (
+                        <Image
+                          src={book.capa.replace("http://", "https://")}
+                          alt={book.titulo}
+                          fill
+                          sizes="(max-width: 768px) 100vw, 200px"
+                          className="object-cover"
+                        />
+                      ) : (
+                        <div className="flex h-full items-center justify-center px-3 text-center text-xs text-[#A5A1B8] font-spartan">
+                          Sem capa
+                        </div>
+                      )}
+                    </div>
+
+                    <h3 className="text-base font-lexend font-medium text-white mt-3 line-clamp-1 group-hover:text-[#8c52ff] transition-colors">
+                      {book.titulo}
+                    </h3>
+                    <p className="text-sm text-[#A5A1B8] font-spartan mt-1 line-clamp-1">
+                      {book.autores?.join(", ") ?? "Autor desconhecido"}
+                    </p>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </section>
+        )}
 
         {/* Em Alta */}
         <section className="mb-8">

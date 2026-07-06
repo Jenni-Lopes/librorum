@@ -1,8 +1,14 @@
 import { LoginDTO, LoginResponse } from "@/types/auth";
 
 
-const API_URL =
-  process.env.NEXT_PUBLIC_API_URL;
+function getApiUrl() {
+  const url = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
+  return url.startsWith("http://") || url.startsWith("https://")
+    ? url
+    : "http://localhost:3001";
+}
+
+const API_URL = getApiUrl();
 
 export async function login(dados: LoginDTO) : Promise<LoginResponse>
 {
@@ -25,7 +31,7 @@ export async function login(dados: LoginDTO) : Promise<LoginResponse>
 }
 
 
-export async function cadastro(dados: LoginDTO): Promise<void>
+export async function cadastro(dados: LoginDTO & { nome: string }): Promise<void>
 {
     
     const response = await fetch(`${API_URL}/auth/cadastro`,

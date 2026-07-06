@@ -9,13 +9,13 @@ import { useRouter } from "next/navigation";
 import { login } from "@/services/auth.service";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
 
   const handleSubmit = async(e: React.SyntheticEvent) => {
   
-          const router = useRouter();
           e.preventDefault();
   
           const result = loginSchema.safeParse({
@@ -33,7 +33,7 @@ export default function LoginPage() {
               toast.success("Login feito com sucesso");
               router.push("/");
 
-              router.refresh
+              router.refresh();
   
           } catch (error){
               toast.error("Usuário ou senha inválidos");

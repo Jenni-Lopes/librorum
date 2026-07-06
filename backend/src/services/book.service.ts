@@ -12,7 +12,7 @@ export async function searchBooks(nome: string) {
         }
     );
 
-    return response.data.items.map((book: any) => ({
+    return (response.data.items ?? []).map((book: any) => ({
         id: book.id,
         titulo: book.volumeInfo.title,
         autores: book.volumeInfo.authors,
@@ -41,6 +41,9 @@ export async function searchBookById(id: string) {
         autores: book.volumeInfo.authors?.join(", "),
         imagem: book.volumeInfo.imageLinks?.thumbnail,
         paginas: book.volumeInfo.pageCount,
+        publicadoEm: book.volumeInfo.publishedDate,
+        idioma: book.volumeInfo.language,
+        categoria: book.volumeInfo.categories?.[0],
         descricao: book.volumeInfo.description,
     };
 }

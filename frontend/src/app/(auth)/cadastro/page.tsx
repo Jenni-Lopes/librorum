@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { cadastro } from "@/services/auth.service";
 
 export default function Cadastro() {
+    const router = useRouter();
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [email, setEmail] = useState("");
@@ -18,7 +19,6 @@ export default function Cadastro() {
 
     const handleSubmit = async(e: React.SyntheticEvent) => {
 
-        const router = useRouter();
         e.preventDefault();
 
         const result = cadastroSchema.safeParse({
@@ -33,7 +33,7 @@ export default function Cadastro() {
         }
 
         try {
-            await cadastro({email,senha});
+            await cadastro({nome,email,senha});
             toast.success("Usuário criado com sucesso");
             router.push("/");
 

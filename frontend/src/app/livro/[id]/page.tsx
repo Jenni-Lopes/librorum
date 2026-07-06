@@ -8,6 +8,7 @@ import Header from "@/components/Header";
 import LibraryStatusCard from "@/components/LivroStatus";
 import EvaluateBookCard from "@/components/AvaliacaoLivro";
 import BookReviewsSection from "@/components/Avaliacoes";
+import { adicionarLivroNaBiblioteca, buscarLivroPorId } from "@/services/book";
 import { 
   ArrowLeft, 
   Star, 
@@ -86,11 +87,20 @@ export default function BookDetailsPage({ params }: { params: Promise<{ id: stri
           throw new Error("Use fallback");
         }
 
-        const res = await fetch(`https://www.googleapis.com/books/v1/volumes/${bookId}`);
-        if (!res.ok) throw new Error("Book not found");
-        
-        const data = await res.json();
-        const volumeInfo = data.volumeInfo;
+        const data = await buscarLivroPorId(bookId);
+        const volumeInfo = {
+          title: data.titulo,
+          authors: data.autores ? [data.autores] : undefined,
+          imageLinks: {
+            thumbnail: data.imagem?.replace("http://", "https://"),
+            smallThumbnail: data.imagem?.replace("http://", "https://"),
+          },
+          pageCount: data.paginas,
+          publishedDate: data.publicadoEm,
+          language: data.idioma ?? "N/A",
+          categories: data.categoria ? [data.categoria] : undefined,
+          description: data.descricao,
+        };
 
         setBookData({
           title: volumeInfo.title || "Título Indisponível",
@@ -125,9 +135,15 @@ export default function BookDetailsPage({ params }: { params: Promise<{ id: stri
   }, [bookId]);
 
   // Função para mudar o status de leitura na biblioteca
-  function handleStatusChange(status: string, label: string) {
+  async function handleStatusChange(status: string, label: string) {
     setSelectedStatus(status);
-    toast.success(`Livro adicionado a "${label}"`);
+    try {
+      await adicionarLivroNaBiblioteca(bookId);
+      toast.success(`Livro adicionado a "${label}"`);
+    } catch (error) {
+      const mensagem = error instanceof Error ? error.message : "Erro ao adicionar livro.";
+      toast.error(mensagem);
+    }
   }
 
   // Função para lidar com clique na avaliação útil
