@@ -53,7 +53,12 @@ export default function Sidebar() {
           Biblioteca
         </button>
 
-        <button className="text-[#A5A1B8] hover:text-[#8c52ff] hover:bg-[#1c172d]/50 rounded-xl px-4 py-3 flex items-center gap-3 w-full text-left font-lexend font-medium transition-all cursor-pointer">
+        
+        <Link
+          href="/perfil"
+          className="text-[#A5A1B8] hover:text-[#8c52ff] hover:bg-[#1c172d]/50 rounded-xl px-4 py-3 flex items-center gap-3 w-full text-left font-lexend font-medium transition-all cursor-pointer"
+          aria-label="Ir para a tela de perfil"
+        >
           <Image
             src="/imagens/iconUser.png"
             alt="Perfil"
@@ -62,7 +67,8 @@ export default function Sidebar() {
             className="w-5 h-5 object-contain opacity-70 hover:opacity-100 transition-opacity"
           />
           Perfil
-        </button>
+        </Link>
+
       </nav>
 
       {/* Meta de Leitura */}
