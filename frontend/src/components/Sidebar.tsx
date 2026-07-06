@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import LogoutButton from "./sair";
 
 export default function Sidebar() {
@@ -52,7 +53,12 @@ export default function Sidebar() {
           Biblioteca
         </button>
 
-        <button className="text-[#A5A1B8] hover:text-[#8c52ff] hover:bg-[#1c172d]/50 rounded-xl px-4 py-3 flex items-center gap-3 w-full text-left font-lexend font-medium transition-all cursor-pointer">
+        
+        <Link
+          href="/perfil"
+          className="text-[#A5A1B8] hover:text-[#8c52ff] hover:bg-[#1c172d]/50 rounded-xl px-4 py-3 flex items-center gap-3 w-full text-left font-lexend font-medium transition-all cursor-pointer"
+          aria-label="Ir para a tela de perfil"
+        >
           <Image
             src="/imagens/iconUser.png"
             alt="Perfil"
@@ -61,7 +67,8 @@ export default function Sidebar() {
             className="w-5 h-5 object-contain opacity-70 hover:opacity-100 transition-opacity"
           />
           Perfil
-        </button>
+        </Link>
+
       </nav>
 
       {/* Meta de Leitura */}
@@ -111,9 +118,12 @@ export default function Sidebar() {
           </div>
         </div>
 
-        <button className="w-full bg-[#8c52ff] hover:bg-[#7a44eb] text-white font-lexend font-semibold text-xs py-2.5 px-4 rounded-xl transition-all shadow-[0_4px_12px_rgba(140,82,255,0.25)] hover:shadow-[0_4px_16px_rgba(140,82,255,0.4)] cursor-pointer">
+        <Link 
+          href="/livro/e-assim-que-acaba"
+          className="w-full bg-[#8c52ff] hover:bg-[#7a44eb] text-white font-lexend font-semibold text-xs py-2.5 px-4 rounded-xl transition-all shadow-[0_4px_12px_rgba(140,82,255,0.25)] hover:shadow-[0_4px_16px_rgba(140,82,255,0.4)] cursor-pointer text-center"
+        >
           Continuar leitura
-        </button>
+        </Link>
       </div>
 
       {/* Sair */}
