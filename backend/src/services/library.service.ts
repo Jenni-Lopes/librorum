@@ -67,30 +67,66 @@ export async function adicionarLivroService(
     googleBookId: string,
     userId: number
 ) {
-    await verificarLivroDuplicado(googleBookId, userId);
+    const livroExistente = await prisma.library.findUnique({
+        where: {
+            userId_googleBookId: {
+                userId,
+                googleBookId,
+            },
+        },
+    });
 
-    const dadosGoogle = await buscarDadosGoogleBooks(googleBookId);
+    if (livroExistente) {
+        throw new Error("Este livro já está na sua biblioteca.");
+    }
 
-    const dadosLivro = montarDadosLivro(
-        googleBookId,
-        userId,
-        dadosGoogle
-    );
+    const livroGoogle = await searchBookById(googleBookId);
 
-    return await salvarLivro(dadosLivro);
+    const livro = await prisma.library.create({
+        data: {
+            googleBookId,
+            titulo: livroGoogle.titulo,
+            autores: livroGoogle.autores,
+            imagem: livroGoogle.imagem,
+            paginas: livroGoogle.paginas,
+            userId,
+        },
+    });
+
+    return livro;
 }
 
 /*FUNÇÕES QUE IMPLEMENTAREMOS NAS PRÓXIMAS ETAPAS*/
 
 export async function listarBibliotecaService(userId: number) {
-    return await prisma.library.findMany({
+
+    const livros = await prisma.library.findMany({
+
         where: {
-            userId,
+            userId
         },
+
         orderBy: {
-            createdAt: "desc",
+            createdAt: "desc"
         },
+
+        select: {
+            id: true,
+            googleBookId: true,
+            titulo: true,
+            autores: true,
+            imagem: true,
+            paginas: true,
+            paginaAtual: true,
+            percentual: true,
+            nota: true,
+            status: true
+        }
+
     });
+
+    return livros;
+
 }
 
 export async function buscarLivroService(id: number, userId: number) {
