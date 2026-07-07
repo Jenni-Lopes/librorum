@@ -1,26 +1,58 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
+import { listarBiblioteca, LivroBiblioteca } from "@/services/book";
+import { buscarMetaAtual } from "@/services/goal";
 import LogoutButton from "./sair";
 
 export default function Sidebar() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const [meta, setMeta] = useState<number | null>(null);
+  const [biblioteca, setBiblioteca] = useState<LivroBiblioteca[]>([]);
 
   const buscaAtiva = pathname === "/" && searchParams.get("focus") === "busca";
+  const livrosLidos = biblioteca.filter((livro) => livro.status === "FINISHED").length;
+  const percentualMeta = meta && meta > 0 ? Math.min(100, Math.round((livrosLidos / meta) * 100)) : 0;
+
+  useEffect(() => {
+    async function carregarMeta() {
+      try {
+        const [livros, metaAtual] = await Promise.all([
+          listarBiblioteca(),
+          buscarMetaAtual(),
+        ]);
+
+        setBiblioteca(livros);
+        setMeta(metaAtual.target);
+      } catch (error) {
+        console.error("Erro ao carregar meta da sidebar:", error);
+      }
+    }
+
+    carregarMeta();
+  }, []);
+
+  useEffect(() => {
+    function atualizarMeta(event: Event) {
+      const metaAtualizada = event as CustomEvent<{ target?: number }>;
+
+      if (typeof metaAtualizada.detail?.target === "number") {
+        setMeta(metaAtualizada.detail.target);
+      }
+    }
+
+    window.addEventListener("librorum:meta-atualizada", atualizarMeta);
+
+    return () => {
+      window.removeEventListener("librorum:meta-atualizada", atualizarMeta);
+    };
+  }, []);
 
   function itemMenuAtivo(ativo: boolean) {
-    if (!mounted) {
-      return "text-[#A5A1B8] hover:text-[#8c52ff] hover:bg-[#1c172d]/50";
-    }
     return ativo
       ? "bg-[#271E42] text-[#8c52ff] border border-[#3b2d63]"
       : "text-[#A5A1B8] hover:text-[#8c52ff] hover:bg-[#1c172d]/50";
@@ -75,14 +107,14 @@ export default function Sidebar() {
         <p className="text-xs text-[#A5A1B8] font-spartan font-semibold uppercase tracking-wider">Meta de leitura</p>
         <div className="flex justify-between items-baseline mt-2">
           <span className="text-lg font-bold text-white font-lexend">
-            50<span className="text-xs text-[#A5A1B8] font-normal">/50 livros</span>
+            {livrosLidos}<span className="text-xs text-[#A5A1B8] font-normal">/{meta ?? "--"} livros</span>
           </span>
         </div>
         <div className="flex items-center gap-3 mt-2">
           <div className="w-full bg-[#271E42] rounded-full h-2 overflow-hidden">
-            <div className="bg-linear-to-r from-[#00E5FF] to-[#8c52ff] h-full rounded-full" style={{ width: "100%" }} />
+            <div className="bg-linear-to-r from-[#00E5FF] to-[#8c52ff] h-full rounded-full" style={{ width: `${percentualMeta}%` }} />
           </div>
-          <span className="text-xs text-[#A5A1B8] font-spartan font-semibold">100%</span>
+          <span className="text-xs text-[#A5A1B8] font-spartan font-semibold">{percentualMeta}%</span>
         </div>
       </div>
 

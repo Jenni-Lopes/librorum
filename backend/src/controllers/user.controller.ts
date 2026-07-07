@@ -32,7 +32,9 @@ export async function login(req: Request, res: Response) {
     });
 
     res.json({
-      sucess: true,
+      success: true,
+      token: resposta.token,
+      user: resposta.user,
     });
   } catch (error) {
     res.status(400).json({
@@ -44,6 +46,6 @@ export async function login(req: Request, res: Response) {
 export async function sair(_req: Request, res: Response) {
   res.clearCookie("token");
   res.json({
-    sucess: true,
+    success: true,
   });
 }

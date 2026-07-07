@@ -33,9 +33,12 @@ export interface LivroBiblioteca {
   status: "WANT_TO_READ" | "READING" | "FINISHED" | "DROPPED";
 }
 
+export type StatusLeitura = LivroBiblioteca["status"];
+
 export interface CreateLivroBibliotecaDTO {
   googleBookId: string;
-  userId?: number;
+  status?: StatusLeitura;
+  nota?: number;
 }
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
@@ -59,6 +62,7 @@ export async function getLivros(
   const response = await fetch(
     `${API_URL}/books?q=${encodeURIComponent(busca)}`,
     {
+      credentials: "include",
       headers: getHeaders(cookieHeader),
     }
   );
@@ -77,6 +81,7 @@ export async function getLivro(
   cookieHeader?: string
 ): Promise<LivroDetalhe> {
   const response = await fetch(`${API_URL}/books/${encodeURIComponent(id)}`, {
+    credentials: "include",
     headers: getHeaders(cookieHeader),
   });
 
@@ -94,6 +99,7 @@ export async function getBiblioteca(
   const url = userId ? `${API_URL}/library?userId=${userId}` : `${API_URL}/library`;
 
   const response = await fetch(url, {
+    credentials: "include",
     headers: getHeaders(cookieHeader),
   });
 
@@ -118,7 +124,8 @@ export async function createLivroBiblioteca(
     },
     body: JSON.stringify({
       googleBookId: livro.googleBookId,
-      userId: livro.userId,
+      status: livro.status,
+      nota: livro.nota,
     }),
   });
 
@@ -148,9 +155,10 @@ export const listarBiblioteca = getBiblioteca;
 
 export async function adicionarLivroNaBiblioteca(
   googleBookId: string,
-  userId?: number
+  status?: StatusLeitura,
+  nota?: number
 ): Promise<LivroBiblioteca> {
-  return createLivroBiblioteca({ googleBookId, userId });
+  return createLivroBiblioteca({ googleBookId, status, nota });
 }
 
 export const removerLivroDaBiblioteca = deleteLivroBiblioteca;

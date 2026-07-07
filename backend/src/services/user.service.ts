@@ -50,6 +50,8 @@ export async function loginUsuarioService(email: string, senha: string) {
   const token = jwt.sign(
     {
       id: usuario.id,
+      nome: usuario.nome,
+      email: usuario.email,
     },
     process.env.JWT_SECRET!,
     {
@@ -59,5 +61,10 @@ export async function loginUsuarioService(email: string, senha: string) {
 
   return {
     token,
+    user: {
+      id: usuario.id,
+      nome: usuario.nome,
+      email: usuario.email,
+    },
   };
 }

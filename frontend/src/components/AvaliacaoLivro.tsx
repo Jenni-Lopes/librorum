@@ -8,8 +8,6 @@ interface AvaliacaoLivroProps {
   setHoverRating: (val: number) => void;
   showReviewForm: boolean;
   setShowReviewForm: (val: boolean) => void;
-  newReviewName: string;
-  setNewReviewName: (val: string) => void;
   newReviewRating: number;
   setNewReviewRating: (val: number) => void;
   newReviewText: string;
@@ -25,8 +23,6 @@ export default function AvaliacaoLivro({
   setHoverRating,
   showReviewForm,
   setShowReviewForm,
-  newReviewName,
-  setNewReviewName,
   newReviewRating,
   setNewReviewRating,
   newReviewText,
@@ -77,17 +73,6 @@ export default function AvaliacaoLivro({
       {/* Formulário Colapsável de Nova Avaliação */}
       {showReviewForm && (
         <form onSubmit={onSubmitReview} className="mt-4 flex flex-col gap-3 pt-4 border-t border-[#3b2d63]/40">
-          <div className="flex flex-col gap-1">
-            <label className="text-[10px] text-[#A5A1B8] font-spartan font-semibold uppercase tracking-wider">Seu Nome</label>
-            <input 
-              type="text" 
-              value={newReviewName} 
-              onChange={(e) => setNewReviewName(e.target.value)}
-              placeholder="Laura"
-              className="bg-[#15131D] border border-[#3b2d63] rounded-xl py-2 px-3 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-[#8c52ff] font-spartan"
-            />
-          </div>
-          
           <div className="flex flex-col gap-1">
             <label className="text-[10px] text-[#A5A1B8] font-spartan font-semibold uppercase tracking-wider">Nota (Estrelas)</label>
             <div className="flex gap-1 mt-1">

@@ -7,10 +7,9 @@ import Header from "@/components/Header";
 import BookCard from "@/components/BookCard";
 import SearchBookCard from "@/components/SearchBookCard";
 import { toast } from "sonner";
-import { Bookmark, XCircle, CheckCircle } from "lucide-react";
+import { Bookmark, BookOpen, XCircle, CheckCircle } from "lucide-react";
 import {
   buscarLivros,
-  adicionarLivroNaBiblioteca,
   listarBiblioteca,
   removerLivroDaBiblioteca,
   Livro,
@@ -60,48 +59,12 @@ export default function Biblioteca() {
     }
   }
 
-  const handleAddBookToLibrary = async (
-    book: Livro,
-    status: "WANT_TO_READ" | "READING" | "FINISHED" | "DROPPED" = "WANT_TO_READ"
-  ) => {
-    try {
-      // Copiar para o banco de dados via API
-      const result = await adicionarLivroNaBiblioteca(book.id);
-
-      // adicionar na biblioteca local com o status correto
-      const newBook: LivroBiblioteca = {
-        id: result.id,
-        googleBookId: book.id,
-        titulo: book.titulo,
-        autores: book.autores?.join(", ") ?? "Autor desconhecido",
-        imagem: book.capa ?? null,
-        paginas: null,
-        paginaAtual: 0,
-        percentual: 0,
-        nota: null,
-        status: status // usamos o status que o usuário selecionou
-      };
-
-      setBiblioteca((prev) => {
-        if (prev.some((b) => b.googleBookId === book.id)) {
-          return prev;
-        }
-        return [newBook, ...prev];
-      });
-
-      toast.success(`"${book.titulo}" adicionado à biblioteca!`);
-    } catch (err: any) {
-      const mensagem = err instanceof Error ? err.message : "Erro ao adicionar livro.";
-      toast.error(mensagem);
-    }
-  };
-
   const handleRemoveBook = async (id: number) => {
     try {
       await removerLivroDaBiblioteca(id);
       setBiblioteca((prev) => prev.filter((book) => book.id !== id));
       toast.success("Livro removido da biblioteca.");
-    } catch (err: any) {
+    } catch (err: unknown) {
       const mensagem = err instanceof Error ? err.message : "Erro ao remover livro.";
       toast.error(mensagem);
     }
@@ -124,8 +87,9 @@ export default function Biblioteca() {
         return <CheckCircle className={className} />;
       case "abandonados":
         return <XCircle className={className} />;
-      case "livros":
       case "lendo":
+        return <BookOpen className={className} />;
+      case "livros":
       default:
         return (
           <Image
@@ -183,7 +147,7 @@ export default function Biblioteca() {
             {!carregando && !erro && (
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5">
                 {resultados.map((book) => (
-                  <SearchBookCard key={book.id} book={book} onAdd={handleAddBookToLibrary} />
+                  <SearchBookCard key={book.id} book={book} />
                 ))}
               </div>
             )}
@@ -226,9 +190,6 @@ export default function Biblioteca() {
                     {queroLerList.length} {queroLerList.length === 1 ? "livro" : "livros"}
                   </span>
                 </h2>
-                <a href="#" className="text-xs font-semibold text-[#8c52ff] hover:underline font-spartan">
-                  Ver todos
-                </a>
               </div>
 
               {queroLerList.length === 0 ? (
@@ -250,21 +211,12 @@ export default function Biblioteca() {
             <section>
               <div className="flex justify-between items-center mb-6">
                 <h2 className="flex items-center gap-2.5 text-base font-bold font-lexend text-white uppercase tracking-wider">
-                  <Image
-                    src="/imagens/iconBiblio.png"
-                    alt="Lendo"
-                    width={20}
-                    height={20}
-                    className="w-5 h-5 object-contain"
-                  />
+                  <BookOpen className="w-5 h-5 text-[#8c52ff]" />
                   Lendo{" "}
                   <span className="text-xs text-[#A5A1B8] font-normal lowercase font-spartan ml-1.5">
                     {lendoList.length} {lendoList.length === 1 ? "livro" : "livros"}
                   </span>
                 </h2>
-                <a href="#" className="text-xs font-semibold text-[#8c52ff] hover:underline font-spartan">
-                  Ver todos
-                </a>
               </div>
 
               {lendoList.length === 0 ? (
@@ -292,9 +244,6 @@ export default function Biblioteca() {
                     {lidosList.length} {lidosList.length === 1 ? "livro" : "livros"}
                   </span>
                 </h2>
-                <a href="#" className="text-xs font-semibold text-[#8c52ff] hover:underline font-spartan">
-                  Ver todos
-                </a>
               </div>
 
               {lidosList.length === 0 ? (

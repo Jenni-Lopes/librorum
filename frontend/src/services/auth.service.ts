@@ -21,6 +21,7 @@ const API_URL = getApiUrl();
 export async function login(dados: LoginDTO): Promise<LoginResponse> {
   const response = await fetch(`${API_URL}/auth/login`, {
     method: "POST",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
     },
@@ -45,6 +46,7 @@ export async function login(dados: LoginDTO): Promise<LoginResponse> {
 export async function cadastro(dados: CadastroDTO): Promise<void> {
   const response = await fetch(`${API_URL}/auth/cadastro`, {
     method: "POST",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
     },
@@ -65,6 +67,7 @@ export async function sair(): Promise<void> {
 
   const response = await fetch(`${API_URL}/auth/sair`, {
     method: "POST",
+    credentials: "include",
   });
 
   if (!response.ok) {

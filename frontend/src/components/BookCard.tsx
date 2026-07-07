@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { Star, Trash2 } from "lucide-react";
 import { LivroBiblioteca } from "@/services/book";
 
@@ -8,14 +9,16 @@ interface BookCardProps {
 }
 
 export default function BookCard({ book, onRemove }: BookCardProps) {
+  const imagem = book.imagem?.replace("http://", "https://");
+
   return (
-    <div className="bg-[#181424] border border-[#3b2d63] rounded-2xl p-4 hover:border-[#8c52ff] hover:bg-[#1f1a30] transition-all cursor-pointer shadow-lg flex flex-col justify-between group">
-      <div>
+    <div className="bg-[#181424] border border-[#3b2d63] rounded-2xl p-4 hover:border-[#8c52ff] hover:bg-[#1f1a30] transition-all shadow-lg flex flex-col justify-between group">
+      <Link href={`/livro/${book.googleBookId}`} className="block cursor-pointer">
         {/* Capa do Livro */}
         <div className="relative aspect-2/3 w-full max-w-40 mx-auto rounded-xl overflow-hidden border border-[#3b2d63]/50 shadow-md">
           {book.imagem ? (
             <Image
-              src={book.imagem}
+              src={imagem}
               alt={book.titulo}
               fill
               sizes="(max-width: 768px) 100vw, 150px"
@@ -56,7 +59,7 @@ export default function BookCard({ book, onRemove }: BookCardProps) {
             </div>
           </div>
         )}
-      </div>
+      </Link>
 
       {/* Botão Remover */}
       <button 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import Image from "next/image";
 
 type HeaderProps = {
@@ -9,25 +9,6 @@ type HeaderProps = {
   pesquisarLivros?: () => void;
   focarBusca?: boolean;
 };
-
-type Usuario = {
-  nome?: string;
-};
-
-function getInicialUsuario() {
-  if (typeof window === "undefined") return "L";
-
-  const dadosUsuario = localStorage.getItem("librorum:user");
-  let usuario: Usuario | null = null;
-
-  try {
-    usuario = dadosUsuario ? JSON.parse(dadosUsuario) : null;
-  } catch {
-    localStorage.removeItem("librorum:user");
-  }
-
-  return usuario?.nome?.[0]?.toUpperCase() ?? "L";
-}
 
 export default function Header({
   busca = "",

@@ -58,6 +58,52 @@ model User {
 
   livros    Library[]
 
+  reviews   Review[]
+
+  goals     Goal[]
+
   createdAt DateTime @default(now())
+
+}
+
+model Review {
+
+  id           Int      @id @default(autoincrement())
+
+  googleBookId String
+
+  rating       Int
+
+  text         String
+
+  userId       Int
+
+  user         User     @relation(fields: [userId], references: [id])
+
+  createdAt    DateTime @default(now())
+
+  updatedAt    DateTime @updatedAt
+
+  @@unique([userId, googleBookId])
+
+}
+
+model Goal {
+
+  id         Int      @id @default(autoincrement())
+
+  year       Int
+
+  target     Int
+
+  userId     Int
+
+  user       User     @relation(fields: [userId], references: [id])
+
+  createdAt  DateTime @default(now())
+
+  updatedAt  DateTime @updatedAt
+
+  @@unique([userId, year])
 
 }

@@ -7,10 +7,10 @@ interface LivroStatusProps {
 
 export default function LivroStatus({ selectedStatus, onStatusChange }: LivroStatusProps) {
   const statuses = [
-    { value: "QUERO_LER", label: "Quero ler", icon: Bookmark },
-    { value: "LENDO", label: "Lendo", icon: BookOpen },
-    { value: "LIDO", label: "Lido", icon: CheckCircle2 },
-    { value: "ABANDONADO", label: "Abandonado", icon: XCircle }
+    { value: "WANT_TO_READ", label: "Quero ler", icon: Bookmark },
+    { value: "READING", label: "Lendo", icon: BookOpen },
+    { value: "FINISHED", label: "Lido", icon: CheckCircle2 },
+    { value: "DROPPED", label: "Abandonado", icon: XCircle }
   ];
 
   return (

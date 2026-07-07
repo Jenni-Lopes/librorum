@@ -8,7 +8,13 @@ import Header from "@/components/Header";
 import LibraryStatusCard from "@/components/LivroStatus";
 import EvaluateBookCard from "@/components/AvaliacaoLivro";
 import BookReviewsSection from "@/components/Avaliacoes";
-import { adicionarLivroNaBiblioteca, buscarLivroPorId } from "@/services/book";
+import {
+  adicionarLivroNaBiblioteca,
+  buscarLivroPorId,
+  listarBiblioteca,
+  StatusLeitura,
+} from "@/services/book";
+import { listarAvaliacoes, ReviewApi, salvarAvaliacao } from "@/services/review";
 import { ArrowLeft, Bookmark, Calendar, FileText, Globe } from "lucide-react";
 import { toast } from "sonner";
 
@@ -33,6 +39,22 @@ interface Review {
   hasLiked: boolean;
 }
 
+function formatarData(value: string) {
+  return new Intl.DateTimeFormat("pt-BR").format(new Date(value));
+}
+
+function mapReview(review: ReviewApi): Review {
+  return {
+    id: review.id,
+    user: review.user.nome,
+    date: formatarData(review.updatedAt),
+    rating: review.rating,
+    text: review.text,
+    useful: 0,
+    hasLiked: false,
+  };
+}
+
 function formatLanguage(language?: string) {
   if (!language) return "N/A";
 
@@ -55,14 +77,14 @@ export default function BookDetailsPage({ params }: { params: Promise<{ id: stri
   const [bookData, setBookData] = useState<BookData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [selectedStatus, setSelectedStatus] = useState("LENDO");
+  const [selectedStatus, setSelectedStatus] = useState<StatusLeitura>("WANT_TO_READ");
   const [userRating, setUserRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [newReviewText, setNewReviewText] = useState("");
   const [newReviewRating, setNewReviewRating] = useState(5);
-  const [newReviewName, setNewReviewName] = useState("Laura");
   const [reviews, setReviews] = useState<Review[]>([]);
+  const [mostrarDescricaoCompleta, setMostrarDescricaoCompleta] = useState(false);
 
   useEffect(() => {
     async function fetchBookData() {
@@ -82,6 +104,21 @@ export default function BookDetailsPage({ params }: { params: Promise<{ id: stri
           category: data.categoria || "Categoria não informada",
           description: removeHtml(data.descricao),
         });
+
+        const biblioteca = await listarBiblioteca();
+        const livroSalvo = biblioteca.find((livro) => livro.googleBookId === bookId);
+
+        if (livroSalvo) {
+          setSelectedStatus(livroSalvo.status);
+
+          if (livroSalvo.nota) {
+            setUserRating(livroSalvo.nota);
+            setNewReviewRating(livroSalvo.nota);
+          }
+        }
+
+        const avaliacoes = await listarAvaliacoes(bookId);
+        setReviews(avaliacoes.map(mapReview));
       } catch {
         setBookData(null);
         setError("Não foi possível carregar os dados deste livro.");
@@ -94,18 +131,32 @@ export default function BookDetailsPage({ params }: { params: Promise<{ id: stri
   }, [bookId]);
 
   async function handleStatusChange(status: string, label: string) {
-    setSelectedStatus(status);
+    const novoStatus = status as StatusLeitura;
+
+    setSelectedStatus(novoStatus);
 
     try {
-      await adicionarLivroNaBiblioteca(bookId);
-      toast.success(`Livro adicionado a "${label}"`);
+      await adicionarLivroNaBiblioteca(bookId, novoStatus);
+      toast.success(`Livro salvo como "${label}"`);
     } catch (error) {
       const mensagem = error instanceof Error ? error.message : "Erro ao adicionar livro.";
       toast.error(mensagem);
     }
   }
 
-  function handleAddReview(e: React.FormEvent) {
+  async function handleRatingChange(rating: number) {
+    setNewReviewRating(rating);
+
+    try {
+      await adicionarLivroNaBiblioteca(bookId, selectedStatus, rating);
+      toast.success(`Voce avaliou este livro com ${rating} estrelas!`);
+    } catch (error) {
+      const mensagem = error instanceof Error ? error.message : "Erro ao salvar avaliacao.";
+      toast.error(mensagem);
+    }
+  }
+
+  async function handleAddReview(e: React.FormEvent) {
     e.preventDefault();
 
     if (!newReviewText.trim()) {
@@ -113,20 +164,22 @@ export default function BookDetailsPage({ params }: { params: Promise<{ id: stri
       return;
     }
 
-    const newReview: Review = {
-      id: Date.now(),
-      user: newReviewName.trim() || "Anônimo",
-      date: "Hoje",
-      rating: newReviewRating,
-      text: newReviewText,
-      useful: 0,
-      hasLiked: false,
-    };
+    try {
+      const reviewSalva = await salvarAvaliacao(bookId, newReviewRating, newReviewText);
+      await adicionarLivroNaBiblioteca(bookId, selectedStatus, newReviewRating);
 
-    setReviews((currentReviews) => [newReview, ...currentReviews]);
-    setNewReviewText("");
-    setShowReviewForm(false);
-    toast.success("Avaliação publicada com sucesso!");
+      setReviews((currentReviews) => {
+        const outrasReviews = currentReviews.filter((review) => review.id !== reviewSalva.id);
+        return [mapReview(reviewSalva), ...outrasReviews];
+      });
+      setNewReviewText("");
+      setUserRating(newReviewRating);
+      setShowReviewForm(false);
+      toast.success("Avaliacao publicada com sucesso!");
+    } catch (error) {
+      const mensagem = error instanceof Error ? error.message : "Erro ao salvar avaliacao.";
+      toast.error(mensagem);
+    }
   }
 
   if (loading) {
@@ -231,11 +284,19 @@ export default function BookDetailsPage({ params }: { params: Promise<{ id: stri
             </div>
 
             <div className="mt-6 flex flex-col gap-2">
-              <p className="text-sm text-[#A5A1B8] font-spartan leading-relaxed line-clamp-4 hover:line-clamp-none transition-all duration-300">
+              <p
+                className={`text-sm text-[#A5A1B8] font-spartan leading-relaxed transition-all duration-300 ${
+                  mostrarDescricaoCompleta ? "" : "line-clamp-4"
+                }`}
+              >
                 {bookData.description}
               </p>
-              <button className="text-xs text-[#8c52ff] font-semibold font-lexend text-left hover:underline cursor-pointer w-fit mt-1">
-                Ver mais
+              <button
+                type="button"
+                onClick={() => setMostrarDescricaoCompleta((valorAtual) => !valorAtual)}
+                className="text-xs text-[#8c52ff] font-semibold font-lexend text-left hover:underline cursor-pointer w-fit mt-1"
+              >
+                {mostrarDescricaoCompleta ? "Ver menos" : "Ver mais"}
               </button>
             </div>
           </div>
@@ -253,14 +314,12 @@ export default function BookDetailsPage({ params }: { params: Promise<{ id: stri
               setHoverRating={setHoverRating}
               showReviewForm={showReviewForm}
               setShowReviewForm={setShowReviewForm}
-              newReviewName={newReviewName}
-              setNewReviewName={setNewReviewName}
               newReviewRating={newReviewRating}
               setNewReviewRating={setNewReviewRating}
               newReviewText={newReviewText}
               setNewReviewText={setNewReviewText}
               onSubmitReview={handleAddReview}
-              onStarRatingToast={(rating) => toast.success(`Você avaliou este livro com ${rating} estrelas!`)}
+              onStarRatingToast={handleRatingChange}
             />
           </div>
         </div>
