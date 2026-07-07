@@ -44,19 +44,7 @@ export default function Sidebar() {
           Início
         </Link>
 
-        <Link
-          href="/?focus=busca"
-          className={`${itemMenuAtivo(buscaAtiva)} rounded-xl px-4 py-3 flex items-center gap-3 w-full text-left font-lexend font-medium transition-all cursor-pointer`}
-        >
-          <Image
-            src="/imagens/iconLupa.png"
-            alt="Buscar"
-            width={20}
-            height={20}
-            className="w-5 h-5 object-contain opacity-70 hover:opacity-100 transition-opacity"
-          />
-          Buscar
-        </Link>
+
 
         <button className="text-[#A5A1B8] hover:text-[#8c52ff] hover:bg-[#1c172d]/50 rounded-xl px-4 py-3 flex items-center gap-3 w-full text-left font-lexend font-medium transition-all cursor-pointer">
           <Image
