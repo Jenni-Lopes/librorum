@@ -18,7 +18,13 @@ function getInicialUsuario() {
   if (typeof window === "undefined") return "L";
 
   const dadosUsuario = localStorage.getItem("librorum:user");
-  const usuario: Usuario | null = dadosUsuario ? JSON.parse(dadosUsuario) : null;
+  let usuario: Usuario | null = null;
+
+  try {
+    usuario = dadosUsuario ? JSON.parse(dadosUsuario) : null;
+  } catch {
+    localStorage.removeItem("librorum:user");
+  }
 
   return usuario?.nome?.[0]?.toUpperCase() ?? "L";
 }

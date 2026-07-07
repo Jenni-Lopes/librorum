@@ -56,7 +56,13 @@ function getUsuario(): Usuario | null {
   if (typeof window === "undefined") return null;
 
   const dadosUsuario = localStorage.getItem("librorum:user");
-  return dadosUsuario ? JSON.parse(dadosUsuario) : null;
+
+  try {
+    return dadosUsuario ? JSON.parse(dadosUsuario) : null;
+  } catch {
+    localStorage.removeItem("librorum:user");
+    return null;
+  }
 }
 
 function CartaoEstatistica({ titulo, valor, icone: Icone }: CartaoEstatisticaProps) {
