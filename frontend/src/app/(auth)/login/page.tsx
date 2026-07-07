@@ -43,21 +43,21 @@ export default function LoginPage() {
       }
 
   return (
-    <div className="flex flex-col items-center w-full">
+    <div className="flex flex-col items-center w-full ">
       <Image
         src="/icones/logoLogin.png"
         alt="Logo Librorum"
-        width={360}
-        height={310}
+        width={300}
+        height={280}
         priority
-        className="mb-8"
+        className="mb-4"
       />
 
-      <h2 className="font-lexend text-5xl font-semibold text-[#F5F3FF] text-center mb-6">
+      <h2 className="font-lexend text-4xl font-semibold text-[#F5F3FF] text-center mb-6">
         LOGIN
       </h2>
 
-      <form className="max-w-md w-full flex flex-col items-center space-y-4" onSubmit={handleSubmit}>
+      <form className="max-w-md w-full flex flex-col items-center space-y-3" onSubmit={handleSubmit}>
         <div className="w-full">
           <label className="font-spartan block text-3xl font-regular text-[#F5F3FF] mb-1">
             E-mail
@@ -102,7 +102,7 @@ export default function LoginPage() {
 
         <button
           type="submit"
-          className="font-spartan w-full mt-10 py-2.5 px-4 bg-[#8B5CF6] hover:bg-[#7C3AED] text-[#F5F3FF] text-4xl font-medium rounded-lg hover:shadow-lg transition-all duration-200 shadow-[0_0_30px_rgba(139,92,246,0.35)] "
+          className="font-spartan w-full mt-8 py-2 px-4 bg-[#8B5CF6] hover:bg-[#7C3AED] text-[#F5F3FF] text-4xl font-medium rounded-lg hover:shadow-lg transition-all duration-200 shadow-[0_0_30px_rgba(139,92,246,0.35)] "
         >
           ENTRAR
         </button>
