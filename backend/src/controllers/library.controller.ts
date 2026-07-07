@@ -4,7 +4,6 @@ import {
     adicionarLivroService,
     listarBibliotecaService,
     buscarLivroService,
-    atualizarProgressoService,
     atualizarStatusService,
     removerLivroService,
 } from "../services/library.service";
@@ -120,14 +119,6 @@ export async function adicionarLivro(req: Request, res: Response) {
             erro: "Erro ao adicionar livro.",
         });
     }
-}
-
-export async function atualizarProgresso(_req: Request, res: Response) {
-    await atualizarProgressoService();
-
-    return res.status(501).json({
-        mensagem: "Funcao ainda nao implementada.",
-    });
 }
 
 export async function atualizarStatus(req: Request, res: Response) {
