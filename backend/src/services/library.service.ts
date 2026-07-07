@@ -93,10 +93,11 @@ export async function listarBibliotecaService(userId: number) {
     });
 }
 
-export async function buscarLivroService(id: number) {
-    return await prisma.library.findUnique({
+export async function buscarLivroService(id: number, userId: number) {
+    return await prisma.library.findFirst({
         where: {
             id,
+            userId,
         },
     });
 }
@@ -109,10 +110,16 @@ export async function atualizarStatusService() {
     // Implementaremos depois
 }
 
-export async function removerLivroService(id: number) {
+export async function removerLivroService(id: number, userId: number) {
+    const livro = await buscarLivroService(id, userId);
+
+    if (!livro) {
+        throw new Error("Livro não encontrado.");
+    }
+
     return await prisma.library.delete({
         where: {
-            id,
+            id: livro.id,
         },
     });
 }

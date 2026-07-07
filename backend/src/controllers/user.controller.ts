@@ -3,6 +3,7 @@ import {
     cadastrarUsuarioService,
     loginUsuarioService,
 } from "../services/user.service";
+import { gerarToken } from "../utils/jwt";
 
 export async function cadastro(req: Request, res: Response) {
     try {
@@ -39,7 +40,7 @@ export async function login(req: Request, res: Response) {
         const usuario = await loginUsuarioService({ email, senha });
 
         return res.status(200).json({
-            token: String(usuario.id),
+            token: gerarToken(usuario),
             user: usuario,
         });
     } catch (error) {
