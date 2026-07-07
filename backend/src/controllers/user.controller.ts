@@ -37,18 +37,30 @@ export async function login(req: Request, res: Response) {
             });
         }
 
-        const usuario = await loginUsuarioService({ email, senha });
+        const usuario = await loginUsuarioService({
+            email,
+            senha,
+        });
+
+        const token = gerarToken(usuario);
 
         return res.status(200).json({
-            token: gerarToken(usuario),
-            user: usuario,
+            mensagem: "Login realizado com sucesso.",
+            token,
+            usuario,
         });
+
     } catch (error) {
+
         if (error instanceof Error) {
-            return res.status(401).json({ erro: error.message });
+            return res.status(401).json({
+                erro: error.message,
+            });
         }
 
-        return res.status(500).json({ erro: "Erro ao fazer login." });
+        return res.status(500).json({
+            erro: "Erro ao fazer login.",
+        });
     }
 }
 
