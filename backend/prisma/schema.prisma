@@ -1,9 +1,63 @@
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
+}
+
+enum ReadingStatus {
+  WANT_TO_READ
+  READING
+  FINISHED
+  DROPPED
+}
+
+model Library {
+
+  id            Int      @id @default(autoincrement())
+
+  googleBookId  String
+
+  titulo        String
+
+  autores       String?
+
+  imagem        String?
+
+  paginas       Int?
+
+  paginaAtual   Int      @default(0)
+
+  percentual    Float    @default(0)
+
+  nota          Float?
+
+  status        ReadingStatus @default(WANT_TO_READ)
+
+  userId        Int
+
+  user          User @relation(fields: [userId], references: [id])
+
+  createdAt     DateTime @default(now())
+
+  @@unique([userId, googleBookId])
+
+}
+
+model User {
+
+  id        Int @id @default(autoincrement())
+
+  nome      String
+
+  email     String @unique
+
+  senha     String
+
+  livros    Library[]
+
+  createdAt DateTime @default(now())
+
 }
