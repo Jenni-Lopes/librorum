@@ -1,6 +1,24 @@
 import Image from "next/image";
 
-export default function Sidebar() {
+interface SidebarProps {
+  activePage?: "inicio" | "buscar" | "biblioteca" | "perfil";
+}
+
+export default function Sidebar({ activePage = "biblioteca" }: SidebarProps) {
+  const getButtonClass = (page: "inicio" | "buscar" | "biblioteca" | "perfil") => {
+    const isActive = activePage === page;
+    return isActive
+      ? "bg-[#271E42] text-[#8c52ff] border border-[#3b2d63] rounded-xl px-4 py-3 flex items-center gap-3 w-full text-left font-lexend font-medium transition-all cursor-pointer"
+      : "text-[#A5A1B8] hover:text-[#8c52ff] hover:bg-[#1c172d]/50 rounded-xl px-4 py-3 flex items-center gap-3 w-full text-left font-lexend font-medium transition-all cursor-pointer";
+  };
+
+  const getIconClass = (page: "inicio" | "buscar" | "biblioteca" | "perfil") => {
+    const isActive = activePage === page;
+    return isActive
+      ? "w-5 h-5 object-contain filter brightness-110"
+      : "w-5 h-5 object-contain opacity-70 hover:opacity-100 transition-opacity";
+  };
+
   return (
     <aside className="w-80 bg-[#0F0C18] border-r border-[#3b2d63] flex flex-col p-6 h-full shrink-0">
       
@@ -18,46 +36,46 @@ export default function Sidebar() {
 
       {/* Menu */}
       <nav className="flex flex-col gap-2">
-        <button className="bg-[#271E42] text-[#8c52ff] border border-[#3b2d63] rounded-xl px-4 py-3 flex items-center gap-3 w-full text-left font-lexend font-medium transition-all cursor-pointer">
+        <button className={getButtonClass("inicio")}>
           <Image
             src="/imagens/iconCasa.png"
             alt="Início"
             width={20}
             height={20}
-            className="w-5 h-5 object-contain filter brightness-110"
+            className={getIconClass("inicio")}
           />
           Início
         </button>
         
-        <button className="text-[#A5A1B8] hover:text-[#8c52ff] hover:bg-[#1c172d]/50 rounded-xl px-4 py-3 flex items-center gap-3 w-full text-left font-lexend font-medium transition-all cursor-pointer">
+        <button className={getButtonClass("buscar")}>
           <Image
             src="/imagens/iconLupa.png"
             alt="Buscar"
             width={20}
             height={20}
-            className="w-5 h-5 object-contain opacity-70 hover:opacity-100 transition-opacity"
+            className={getIconClass("buscar")}
           />
           Buscar
         </button>
 
-        <button className="text-[#A5A1B8] hover:text-[#8c52ff] hover:bg-[#1c172d]/50 rounded-xl px-4 py-3 flex items-center gap-3 w-full text-left font-lexend font-medium transition-all cursor-pointer">
+        <button className={getButtonClass("biblioteca")}>
           <Image
             src="/imagens/iconBiblio.png"
             alt="Biblioteca"
             width={20}
             height={20}
-            className="w-5 h-5 object-contain opacity-70 hover:opacity-100 transition-opacity"
+            className={getIconClass("biblioteca")}
           />
           Biblioteca
         </button>
 
-        <button className="text-[#A5A1B8] hover:text-[#8c52ff] hover:bg-[#1c172d]/50 rounded-xl px-4 py-3 flex items-center gap-3 w-full text-left font-lexend font-medium transition-all cursor-pointer">
+        <button className={getButtonClass("perfil")}>
           <Image
             src="/imagens/iconUser.png"
             alt="Perfil"
             width={20}
             height={20}
-            className="w-5 h-5 object-contain opacity-70 hover:opacity-100 transition-opacity"
+            className={getIconClass("perfil")}
           />
           Perfil
         </button>
@@ -67,13 +85,13 @@ export default function Sidebar() {
       <div className="bg-[#181424] border border-[#3b2d63] rounded-2xl p-4 mt-6">
         <p className="text-xs text-[#A5A1B8] font-spartan font-semibold uppercase tracking-wider">Meta de leitura</p>
         <div className="flex justify-between items-baseline mt-2">
-          <span className="text-lg font-bold text-white font-lexend">50<span className="text-xs text-[#A5A1B8] font-normal">/50 livros</span></span>
+          <span className="text-lg font-bold text-white font-lexend">35<span className="text-xs text-[#A5A1B8] font-normal">/50 livros</span></span>
         </div>
         <div className="flex items-center gap-3 mt-2">
           <div className="w-full bg-[#271E42] rounded-full h-2 overflow-hidden">
-            <div className="bg-linear-to-r from-[#00E5FF] to-[#8c52ff] h-full rounded-full" style={{ width: '100%' }}></div>
+            <div className="bg-linear-to-r from-[#00E5FF] to-[#8c52ff] h-full rounded-full" style={{ width: '70%' }}></div>
           </div>
-          <span className="text-xs text-[#A5A1B8] font-spartan font-semibold">100%</span>
+          <span className="text-xs text-[#A5A1B8] font-spartan font-semibold">70%</span>
         </div>
       </div>
 
@@ -102,9 +120,9 @@ export default function Sidebar() {
               <p className="text-xs text-[#A5A1B8] font-spartan mt-0.5">Colleen Hoover</p>
             </div>
             <div className="mt-2">
-              <p className="text-[10px] text-[#A5A1B8] font-spartan font-semibold">100% concluído</p>
+              <p className="text-[10px] text-[#A5A1B8] font-spartan font-semibold">65% concluído</p>
               <div className="w-full bg-[#271E42] rounded-full h-1.5 mt-1 overflow-hidden">
-                <div className="bg-linear-to-r from-[#00E5FF] to-[#8c52ff] h-full rounded-full" style={{ width: '100%' }}></div>
+                <div className="bg-linear-to-r from-[#00E5FF] to-[#8c52ff] h-full rounded-full" style={{ width: '65%' }}></div>
               </div>
             </div>
           </div>
@@ -116,18 +134,20 @@ export default function Sidebar() {
       </div>
 
       {/* Sair */}
-      <div className="mt-auto pt-6 flex justify-center">
-        <button className="text-[#A5A1B8] hover:text-[#8c52ff] p-3 rounded-xl hover:bg-[#1c172d] transition-all cursor-pointer" title="Sair">
+      <div className="mt-auto pt-6">
+        <button className="text-[#A5A1B8] hover:text-[#8c52ff] hover:bg-[#1c172d]/50 rounded-xl px-4 py-3 flex items-center gap-3 w-full text-left font-lexend font-medium transition-all cursor-pointer">
           <Image
             src="/imagens/iconSair.png"
             alt="Sair"
-            width={40}
-            height={40}
-            className="w-8 h-8 object-contain opacity-70 hover:opacity-100 transition-opacity"
+            width={20}
+            height={20}
+            className="w-5 h-5 object-contain opacity-70 hover:opacity-100 transition-opacity"
           />
+          Sair
         </button>
       </div>
 
     </aside>
   );
 }
+
