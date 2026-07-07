@@ -118,45 +118,6 @@ export default function Sidebar() {
         </div>
       </div>
 
-      <div className="bg-[#181424] border border-[#3b2d63] rounded-2xl p-4 mt-6 flex flex-col gap-4">
-        <div className="flex justify-between items-center">
-          <span className="text-xs text-[#A5A1B8] font-spartan font-semibold uppercase tracking-wider">Continue lendo</span>
-          <a href="#" className="text-xs text-[#8c52ff] hover:underline font-spartan font-semibold">Ver todos</a>
-        </div>
-
-        <div className="flex gap-4">
-          <div className="w-16 h-24 rounded-lg relative overflow-hidden shrink-0 border border-[#3b2d63] shadow-md">
-            <Image
-              src="/imagens/éAssimQueAcaba.webp"
-              alt="É assim que acaba"
-              fill
-              sizes="64px"
-              className="object-cover"
-            />
-          </div>
-
-          <div className="flex flex-col justify-between grow">
-            <div>
-              <h4 className="text-sm font-semibold text-white font-lexend line-clamp-1">É assim que acaba</h4>
-              <p className="text-xs text-[#A5A1B8] font-spartan mt-0.5">Colleen Hoover</p>
-            </div>
-            <div className="mt-2">
-              <p className="text-[10px] text-[#A5A1B8] font-spartan font-semibold">100% concluído</p>
-              <div className="w-full bg-[#271E42] rounded-full h-1.5 mt-1 overflow-hidden">
-                <div className="bg-linear-to-r from-[#00E5FF] to-[#8c52ff] h-full rounded-full" style={{ width: "100%" }} />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <Link
-          href="/livro/e-assim-que-acaba"
-          className="w-full bg-[#8c52ff] hover:bg-[#7a44eb] text-white font-lexend font-semibold text-xs py-2.5 px-4 rounded-xl transition-all shadow-[0_4px_12px_rgba(140,82,255,0.25)] hover:shadow-[0_4px_16px_rgba(140,82,255,0.4)] cursor-pointer text-center"
-        >
-          Continuar leitura
-        </Link>
-      </div>
-
       <div className="mt-auto pt-6 flex justify-center">
         <LogoutButton />
       </div>
