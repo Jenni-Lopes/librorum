@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
@@ -8,9 +9,18 @@ import LogoutButton from "./sair";
 export default function Sidebar() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const buscaAtiva = pathname === "/" && searchParams.get("focus") === "busca";
 
   function itemMenuAtivo(ativo: boolean) {
+    if (!mounted) {
+      return "text-[#A5A1B8] hover:text-[#8c52ff] hover:bg-[#1c172d]/50";
+    }
     return ativo
       ? "bg-[#271E42] text-[#8c52ff] border border-[#3b2d63]"
       : "text-[#A5A1B8] hover:text-[#8c52ff] hover:bg-[#1c172d]/50";
@@ -44,30 +54,6 @@ export default function Sidebar() {
           Início
         </Link>
 
-        <Link
-          href="/?focus=busca"
-          className={`${itemMenuAtivo(buscaAtiva)} rounded-xl px-4 py-3 flex items-center gap-3 w-full text-left font-lexend font-medium transition-all cursor-pointer`}
-        >
-          <Image
-            src="/imagens/iconLupa.png"
-            alt="Buscar"
-            width={20}
-            height={20}
-            className="w-5 h-5 object-contain opacity-70 hover:opacity-100 transition-opacity"
-          />
-          Buscar
-        </Link>
-
-        <button className="text-[#A5A1B8] hover:text-[#8c52ff] hover:bg-[#1c172d]/50 rounded-xl px-4 py-3 flex items-center gap-3 w-full text-left font-lexend font-medium transition-all cursor-pointer">
-          <Image
-            src="/imagens/iconBiblio.png"
-            alt="Biblioteca"
-            width={20}
-            height={20}
-            className="w-5 h-5 object-contain opacity-70 hover:opacity-100 transition-opacity"
-          />
-          Biblioteca
-        </button>
 
         <Link
           href="/perfil"

@@ -35,7 +35,6 @@ export default function Header({
   pesquisarLivros,
   focarBusca = false,
 }: HeaderProps) {
-  const [inicial] = useState(getInicialUsuario);
   const inputBuscaRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -72,9 +71,7 @@ export default function Header({
         />
       </div>
 
-      <div className="w-10 h-10 rounded-full border-2 border-[#8c52ff] bg-linear-to-tr from-[#362A67] to-[#8c52ff] flex items-center justify-center text-white font-bold font-lexend text-sm overflow-hidden cursor-pointer shadow-[0_0_10px_rgba(140,82,255,0.3)]">
-        {inicial}
-      </div>
+      
     </header>
   );
 }

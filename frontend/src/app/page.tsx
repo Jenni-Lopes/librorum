@@ -1,45 +1,42 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
-import { isAuthenticated } from "@/services/auth.service";
-import { buscarLivros, Livro } from "@/services/book";
+import BookCard from "@/components/BookCard";
+import SearchBookCard from "@/components/SearchBookCard";
+import { toast } from "sonner";
+import { Bookmark, XCircle, CheckCircle } from "lucide-react";
+import {
+  buscarLivros,
+  adicionarLivroNaBiblioteca,
+  listarBiblioteca,
+  removerLivroDaBiblioteca,
+  Livro,
+  LivroBiblioteca
+} from "@/services/book";
 
-const emAltaBooks = [
-  { id: "e-assim-que-acaba", title: "É assim que acaba", author: "Colleen Hoover", rating: "5.0", cover: "/imagens/éAssimQueAcaba.webp" },
-  { id: "39gDEAAAQBAJ", title: "Verity", author: "Colleen Hoover", rating: "4.8", cover: "https://books.google.com/books/content?id=39gDEAAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" },
-  { id: "W1l_DwAAQBAJ", title: "Todas as suas imperfeições", author: "Colleen Hoover", rating: "4.7", cover: "https://books.google.com/books/content?id=W1l_DwAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" },
-  { id: "1_G1DwAAQBAJ", title: "O lado feio do amor", author: "Colleen Hoover", rating: "4.6", cover: "https://books.google.com/books/content?id=1_G1DwAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" },
-  { id: "J8pFEAAAQBAJ", title: "É assim que começa", author: "Colleen Hoover", rating: "4.9", cover: "https://books.google.com/books/content?id=J8pFEAAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" }
-];
-
-const recomendadoBooks = [
-  { id: "K1iEDwAAQBAJ", title: "A Paciente Silenciosa", author: "Alex Michaelides", rating: "4.7", cover: "https://books.google.com/books/content?id=K1iEDwAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" },
-  { id: "zFDtDwAAQBAJ", title: "A Biblioteca da Meia-Noite", author: "Matt Haig", rating: "4.8", cover: "https://books.google.com/books/content?id=zFDtDwAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" },
-  { id: "C0lGDwAAQBAJ", title: "O Homem de Giz", author: "C. J. Tudor", rating: "4.5", cover: "https://books.google.com/books/content?id=C0lGDwAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" },
-  { id: "u3hGDwAAQBAJ", title: "Flores para Algernon", author: "Daniel Keyes", rating: "4.9", cover: "https://books.google.com/books/content?id=u3hGDwAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" },
-  { id: "3R9CDAAAQBAJ", title: "Mentirosos", author: "E. Lockhart", rating: "4.4", cover: "https://books.google.com/books/content?id=3R9CDAAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" }
-];
-
-
-export default function Home() {
-  const router = useRouter();
-  const [busca, setBusca] = useState("");
+export default function Biblioteca() {
+  const [activeTab, setActiveTab] = useState<string>("livros");
+  const [busca, setBusca] = useState<string>("");
   const [resultados, setResultados] = useState<Livro[]>([]);
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState("");
-  const focarBusca =
-    typeof window !== "undefined" && window.location.search.includes("focus=busca");
+  const [biblioteca, setBiblioteca] = useState<LivroBiblioteca[]>([]);
 
+  // Carregar biblioteca do banco de dados ao iniciar
   useEffect(() => {
-    if (!isAuthenticated()) {
-      router.replace("/login");
+    async function loadLibrary() {
+      try {
+        const books = await listarBiblioteca();
+        setBiblioteca(books);
+      } catch (err) {
+        console.error("Erro ao carregar biblioteca:", err);
+      }
     }
-  }, [router]);
+    loadLibrary();
+  }, []);
 
   async function pesquisarLivros() {
     const termo = busca.trim();
@@ -63,133 +60,288 @@ export default function Home() {
     }
   }
 
+  const handleAddBookToLibrary = async (
+    book: Livro,
+    status: "WANT_TO_READ" | "READING" | "FINISHED" | "DROPPED" = "WANT_TO_READ"
+  ) => {
+    try {
+      // Copiar para o banco de dados via API
+      const result = await adicionarLivroNaBiblioteca(book.id);
+
+      // adicionar na biblioteca local com o status correto
+      const newBook: LivroBiblioteca = {
+        id: result.id,
+        googleBookId: book.id,
+        titulo: book.titulo,
+        autores: book.autores?.join(", ") ?? "Autor desconhecido",
+        imagem: book.capa ?? null,
+        paginas: null,
+        paginaAtual: 0,
+        percentual: 0,
+        nota: null,
+        status: status // usamos o status que o usuário selecionou
+      };
+
+      setBiblioteca((prev) => {
+        if (prev.some((b) => b.googleBookId === book.id)) {
+          return prev;
+        }
+        return [newBook, ...prev];
+      });
+
+      toast.success(`"${book.titulo}" adicionado à biblioteca!`);
+    } catch (err: any) {
+      const mensagem = err instanceof Error ? err.message : "Erro ao adicionar livro.";
+      toast.error(mensagem);
+    }
+  };
+
+  const handleRemoveBook = async (id: number) => {
+    try {
+      await removerLivroDaBiblioteca(id);
+      setBiblioteca((prev) => prev.filter((book) => book.id !== id));
+      toast.success("Livro removido da biblioteca.");
+    } catch (err: any) {
+      const mensagem = err instanceof Error ? err.message : "Erro ao remover livro.";
+      toast.error(mensagem);
+    }
+  };
+
+  const tabs = [
+    { id: "livros", label: "Livros", icon: "/imagens/iconBiblio.png" },
+    { id: "quero-ler", label: "Quero ler", icon: "/imagens/iconQueroLer.png" },
+    { id: "lendo", label: "Lendo", icon: "/imagens/iconBiblio.png" },
+    { id: "lidos", label: "Lidos", icon: "/imagens/iconLidos.png" },
+    { id: "abandonados", label: "Abandonados", icon: "/imagens/iconAbandonados.png" }
+  ];
+
+  const getTabIcon = (tabId: string, isActive: boolean) => {
+    const className = `w-4 h-4 ${isActive ? "text-[#8c52ff]" : "text-[#A5A1B8] opacity-70"}`;
+    switch (tabId) {
+      case "quero-ler":
+        return <Bookmark className={className} />;
+      case "lidos":
+        return <CheckCircle className={className} />;
+      case "abandonados":
+        return <XCircle className={className} />;
+      case "livros":
+      case "lendo":
+      default:
+        return (
+          <Image
+            src="/imagens/iconBiblio.png"
+            alt="Livros"
+            width={16}
+            height={16}
+            className={`w-4 h-4 object-contain ${isActive ? "filter brightness-110" : "opacity-70"}`}
+          />
+        );
+    }
+  };
+
+  // Filtrar os livros locais da biblioteca por status
+  const queroLerList = biblioteca.filter((book) => book.status === "WANT_TO_READ");
+  const lendoList = biblioteca.filter((book) => book.status === "READING");
+  const lidosList = biblioteca.filter((book) => book.status === "FINISHED");
+  const abandonadosList = biblioteca.filter((book) => book.status === "DROPPED");
+
   return (
     <main className="flex h-screen w-full overflow-hidden bg-[#15131D] text-[#F5F3FF]">
       <Sidebar />
 
       <div className="flex-1 p-8 overflow-y-auto h-full flex flex-col bg-[#15131D] no-scrollbar">
-        <Header
-          busca={busca}
-          setBusca={setBusca}
-          pesquisarLivros={pesquisarLivros}
-          focarBusca={focarBusca}
-        />
+        <Header busca={busca} setBusca={setBusca} pesquisarLivros={pesquisarLivros} />
 
-        <section className="mb-8">
-          <h1 className="text-4xl font-bold font-lexend text-[#F5F3FF]">Oi, @Laura!</h1>
-          <p className="text-base text-[#A5A1B8] font-spartan mt-1">Continue sua jornada literária.</p>
+        <section className="mb-6 shrink-0">
+          <h1 className="text-3xl font-bold font-lexend text-[#F5F3FF]">Biblioteca</h1>
+          <p className="text-sm text-[#A5A1B8] font-spartan mt-1">Organize e acompanhe suas leituras.</p>
         </section>
 
+        
         {(carregando || erro || resultados.length > 0) && (
-          <section className="mb-8">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-bold font-lexend text-white uppercase tracking-wider">
+          <section className="mb-8 bg-[#181424]/30 border border-[#3b2d63]/50 rounded-3xl p-6 relative">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-base font-bold font-lexend text-white uppercase tracking-wider">
                 Resultado da busca
               </h2>
               {resultados.length > 0 && (
-                <span className="text-sm text-[#A5A1B8] font-spartan">
+                <span className="text-xs text-[#A5A1B8] font-spartan">
                   {resultados.length} livros encontrados
                 </span>
               )}
             </div>
 
             {carregando && (
-              <p className="text-sm text-[#A5A1B8] font-spartan">Buscando livros...</p>
+              <div className="flex items-center gap-3 py-4">
+                <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-[#8c52ff]" />
+                <p className="text-sm text-[#A5A1B8] font-spartan">Buscando livros...</p>
+              </div>
             )}
 
-            {erro && (
-              <p className="text-sm text-red-300 font-spartan">{erro}</p>
-            )}
+            {erro && <p className="text-sm text-red-400 font-spartan py-2">{erro}</p>}
 
             {!carregando && !erro && (
-              <div className="grid grid-cols-5 gap-6">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5">
                 {resultados.map((book) => (
-                  <Link
-                    href={`/livro/${book.id}`}
-                    key={book.id}
-                    className="bg-[#181424] border border-[#3b2d63] rounded-2xl p-4 hover:border-[#8c52ff] hover:bg-[#1f1a30] transition-all cursor-pointer shadow-lg flex flex-col group"
-                  >
-                    <div className="relative aspect-2/3 w-full max-w-40 mx-auto rounded-xl overflow-hidden border border-[#3b2d63]/50 shadow-md group-hover:scale-[1.02] transition-transform duration-200 bg-[#271E42]">
-                      {book.capa ? (
-                        <Image
-                          src={book.capa.replace("http://", "https://")}
-                          alt={book.titulo}
-                          fill
-                          sizes="(max-width: 768px) 100vw, 200px"
-                          className="object-cover"
-                        />
-                      ) : (
-                        <div className="flex h-full items-center justify-center px-3 text-center text-xs text-[#A5A1B8] font-spartan">
-                          Sem capa
-                        </div>
-                      )}
-                    </div>
-
-                    <h3 className="text-base font-lexend font-medium text-white mt-3 line-clamp-1 group-hover:text-[#8c52ff] transition-colors">
-                      {book.titulo}
-                    </h3>
-                    <p className="text-sm text-[#A5A1B8] font-spartan mt-1 line-clamp-1">
-                      {book.autores?.join(", ") ?? "Autor desconhecido"}
-                    </p>
-                  </Link>
+                  <SearchBookCard key={book.id} book={book} onAdd={handleAddBookToLibrary} />
                 ))}
               </div>
             )}
           </section>
         )}
 
-        <section className="mb-8">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="flex items-center gap-2 text-lg font-bold font-lexend text-white uppercase tracking-wider">
-              <Image src="/imagens/iconEmAlta.png" alt="Em alta" width={24} height={24} className="w-6 h-6 object-contain" />
-              Em alta
-            </h2>
-            <a href="#" className="text-sm font-semibold text-[#8c52ff] hover:underline font-spartan">Ver todos</a>
+        <div className="flex justify-between items-center border-b border-[#3b2d63]/40 pb-4 mb-8 shrink-0">
+          <div className="flex gap-1.5 bg-[#181424] border border-[#3b2d63] rounded-2xl p-1.5 w-fit">
+            {tabs.map((tab) => {
+              const isActive = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-spartan font-semibold transition-all cursor-pointer ${
+                    isActive
+                      ? "bg-[#271E42] text-white shadow-sm border border-[#3b2d63]"
+                      : "text-[#A5A1B8] hover:text-white hover:bg-[#1c172d]/50"
+                  }`}
+                >
+                  <span className={isActive ? "text-[#8c52ff]" : ""}>
+                    {getTabIcon(tab.id, isActive)}
+                  </span>
+                  {tab.label}
+                </button>
+              );
+            })}
           </div>
+        </div>
 
-          <div className="grid grid-cols-5 gap-6">
-            {emAltaBooks.map((book) => (
-              <Link href={`/livro/${book.id}`} key={book.id} className="bg-[#181424] border border-[#3b2d63] rounded-2xl p-4 hover:border-[#8c52ff] hover:bg-[#1f1a30] transition-all cursor-pointer shadow-lg flex flex-col group">
-                <div className="relative aspect-2/3 w-full max-w-40 mx-auto rounded-xl overflow-hidden border border-[#3b2d63]/50 shadow-md group-hover:scale-[1.02] transition-transform duration-200">
-                  <Image src={book.cover} alt={book.title} fill sizes="(max-width: 768px) 100vw, 200px" className="object-cover" />
-                </div>
-                <h3 className="text-base font-lexend font-medium text-white mt-3 line-clamp-1 group-hover:text-[#8c52ff] transition-colors">{book.title}</h3>
-                <p className="text-sm text-[#A5A1B8] font-spartan mt-1">{book.author}</p>
-                <div className="flex items-center gap-2 mt-2">
-                  <Image src="/imagens/iconRecomendado.png" alt="Estrela" width={24} height={24} className="w-6 h-6 object-contain" />
-                  <span className="text-base text-[#A5A1B8] font-lexend">{book.rating}</span>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </section>
+        <div className="flex flex-col gap-10">
+          
+          {(activeTab === "livros" || activeTab === "quero-ler") && (
+            <section>
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="flex items-center gap-2.5 text-base font-bold font-lexend text-white uppercase tracking-wider">
+                  <Bookmark className="w-5 h-5 text-[#8c52ff]" />
+                  Quero ler{" "}
+                  <span className="text-xs text-[#A5A1B8] font-normal lowercase font-spartan ml-1.5">
+                    {queroLerList.length} {queroLerList.length === 1 ? "livro" : "livros"}
+                  </span>
+                </h2>
+                <a href="#" className="text-xs font-semibold text-[#8c52ff] hover:underline font-spartan">
+                  Ver todos
+                </a>
+              </div>
 
-        <section className="mb-8">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="flex items-center gap-2 text-lg font-bold font-lexend text-white uppercase tracking-wider">
-              <Image src="/imagens/iconRecomendado.png" alt="Recomendado para você" width={24} height={24} className="w-6 h-6 object-contain" />
-              Recomendado para você
-            </h2>
-            <a href="#" className="text-sm font-semibold text-[#8c52ff] hover:underline font-spartan">Ver todos</a>
-          </div>
-
-          <div className="grid grid-cols-5 gap-6">
-            {recomendadoBooks.map((book) => (
-              <Link href={`/livro/${book.id}`} key={book.id} className="bg-[#181424] border border-[#3b2d63] rounded-2xl p-4 hover:border-[#8c52ff] hover:bg-[#1f1a30] transition-all cursor-pointer shadow-lg flex flex-col group">
-                <div className="relative aspect-2/3 w-full max-w-40 mx-auto rounded-xl overflow-hidden border border-[#3b2d63]/50 shadow-md group-hover:scale-[1.02] transition-transform duration-200">
-                  <Image src={book.cover} alt={book.title} fill sizes="(max-width: 768px) 100vw, 200px" className="object-cover" />
+              {queroLerList.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-10 bg-[#181424] border border-[#3b2d63] rounded-2xl text-center">
+                  <p className="text-sm text-[#A5A1B8] font-spartan">Nenhum livro nesta seção.</p>
                 </div>
-                <h3 className="text-base font-lexend font-medium text-white mt-3 line-clamp-1 group-hover:text-[#8c52ff] transition-colors">{book.title}</h3>
-                <p className="text-sm text-[#A5A1B8] font-spartan mt-1">{book.author}</p>
-                <div className="flex items-center gap-2 mt-2">
-                  <Image src="/imagens/iconRecomendado.png" alt="Estrela" width={24} height={24} className="w-6 h-6 object-contain" />
-                  <span className="text-base text-[#A5A1B8] font-lexend">{book.rating}</span>
+              ) : (
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-5">
+                  {queroLerList.map((book) => (
+                    <BookCard key={book.id} book={book} onRemove={handleRemoveBook} />
+                  ))}
                 </div>
-              </Link>
-            ))}
-          </div>
-        </section>
+              )}
+            </section>
+          )}
 
+          
+          {(activeTab === "livros" || activeTab === "lendo") && (
+            <section>
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="flex items-center gap-2.5 text-base font-bold font-lexend text-white uppercase tracking-wider">
+                  <Image
+                    src="/imagens/iconBiblio.png"
+                    alt="Lendo"
+                    width={20}
+                    height={20}
+                    className="w-5 h-5 object-contain"
+                  />
+                  Lendo{" "}
+                  <span className="text-xs text-[#A5A1B8] font-normal lowercase font-spartan ml-1.5">
+                    {lendoList.length} {lendoList.length === 1 ? "livro" : "livros"}
+                  </span>
+                </h2>
+                <a href="#" className="text-xs font-semibold text-[#8c52ff] hover:underline font-spartan">
+                  Ver todos
+                </a>
+              </div>
+
+              {lendoList.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-10 bg-[#181424] border border-[#3b2d63] rounded-2xl text-center">
+                  <p className="text-sm text-[#A5A1B8] font-spartan">Nenhum livro nesta seção.</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-5">
+                  {lendoList.map((book) => (
+                    <BookCard key={book.id} book={book} onRemove={handleRemoveBook} />
+                  ))}
+                </div>
+              )}
+            </section>
+          )}
+
+          
+          {(activeTab === "livros" || activeTab === "lidos") && (
+            <section className="mb-6">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="flex items-center gap-2.5 text-base font-bold font-lexend text-white uppercase tracking-wider">
+                  <CheckCircle className="w-5 h-5 text-[#8c52ff]" />
+                  Lidos{" "}
+                  <span className="text-xs text-[#A5A1B8] font-normal lowercase font-spartan ml-1.5">
+                    {lidosList.length} {lidosList.length === 1 ? "livro" : "livros"}
+                  </span>
+                </h2>
+                <a href="#" className="text-xs font-semibold text-[#8c52ff] hover:underline font-spartan">
+                  Ver todos
+                </a>
+              </div>
+
+              {lidosList.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-10 bg-[#181424] border border-[#3b2d63] rounded-2xl text-center">
+                  <p className="text-sm text-[#A5A1B8] font-spartan">Nenhum livro nesta seção.</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-5">
+                  {lidosList.map((book) => (
+                    <BookCard key={book.id} book={book} onRemove={handleRemoveBook} />
+                  ))}
+                </div>
+              )}
+            </section>
+          )}
+
+          
+          {activeTab === "abandonados" && (
+            <section className="mb-6">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="flex items-center gap-2.5 text-base font-bold font-lexend text-white uppercase tracking-wider">
+                  <XCircle className="w-5 h-5 text-[#8c52ff]" />
+                  Abandonados{" "}
+                  <span className="text-xs text-[#A5A1B8] font-normal lowercase font-spartan ml-1.5">
+                    {abandonadosList.length} {abandonadosList.length === 1 ? "livro" : "livros"}
+                  </span>
+                </h2>
+              </div>
+
+              {abandonadosList.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-16 px-4 bg-[#181424] border border-[#3b2d63] rounded-2xl text-center">
+                  <XCircle className="w-12 h-12 text-[#3b2d63] opacity-40 mb-4" />
+                  <h3 className="text-base font-lexend font-semibold text-white">Nenhum livro abandonado</h3>
+                  <p className="text-xs text-[#A5A1B8] font-spartan mt-1 max-w-xs">
+                    Muito bem! Você não abandonou nenhuma de suas leituras recentemente.
+                  </p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-5">
+                  {abandonadosList.map((book) => (
+                    <BookCard key={book.id} book={book} onRemove={handleRemoveBook} />
+                  ))}
+                </div>
+              )}
+            </section>
+          )}
+        </div>
       </div>
     </main>
   );
