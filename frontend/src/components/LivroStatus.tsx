@@ -47,4 +47,3 @@ export default function LivroStatus({ selectedStatus, onStatusChange }: LivroSta
     </div>
   );
 }
-
