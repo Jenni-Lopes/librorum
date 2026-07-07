@@ -8,13 +8,25 @@ import {
   buscarLivro
 } from "../controllers/library.controller";
 
+import {
+    autenticarToken
+} from "../middlewares/auth.middleware";
+
 const router = Router();
 
-router.get("/", minhaBiblioteca);
+router.get(
+    "/",
+    autenticarToken,
+    minhaBiblioteca
+);
 
 router.get("/:id", buscarLivro);
 
-router.post("/", adicionarLivro);
+router.post(
+    "/",
+    autenticarToken,
+    adicionarLivro
+);
 
 router.put("/:id/progress", atualizarProgresso);
 
