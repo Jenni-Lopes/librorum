@@ -90,21 +90,6 @@ function StarRating({ nota, max = 5 }: { nota: number | null; max?: number }) {
   );
 }
 
-function StatusBadge({ status }: { status: string }) {
-  const map: Record<string, { label: string; color: string }> = {
-    LENDO: { label: "Lendo", color: "bg-[#00E5FF]/10 text-[#00E5FF] border-[#00E5FF]/30" },
-    LIDO: { label: "Lido", color: "bg-[#8c52ff]/10 text-[#8c52ff] border-[#8c52ff]/30" },
-    QUERO_LER: { label: "Quero Ler", color: "bg-[#FFD700]/10 text-[#FFD700] border-[#FFD700]/30" },
-  };
-  const s = map[status] ?? { label: status, color: "bg-white/10 text-white border-white/20" };
-  return (
-    <span className={`text-[10px] font-spartan font-semibold px-2 py-0.5 rounded-full border ${s.color}`}>
-      {s.label}
-    </span>
-  );
-}
-
-
 function AbaVisaoGeral({
   livros,
   meta,

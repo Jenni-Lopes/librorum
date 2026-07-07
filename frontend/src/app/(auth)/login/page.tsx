@@ -35,8 +35,9 @@ export default function LoginPage() {
 
               router.refresh();
   
-          } catch (error){
-              toast.error("Usuário ou senha inválidos");
+          } catch (error) {
+              const mensagem = error instanceof Error ? error.message : "Usuário ou senha inválidos";
+              toast.error(mensagem);
           }
   
       }

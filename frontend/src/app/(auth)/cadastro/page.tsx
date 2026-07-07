@@ -35,10 +35,11 @@ export default function Cadastro() {
         try {
             await cadastro({nome,email,senha});
             toast.success("Usuário criado com sucesso");
-            router.push("/");
+            router.push("/login");
 
-        } catch (error){
-            toast.error("Usuário ou senha inválidos");
+        } catch (error) {
+            const mensagem = error instanceof Error ? error.message : "Erro ao criar usuário";
+            toast.error(mensagem);
         }
 
     }

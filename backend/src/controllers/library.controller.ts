@@ -7,35 +7,40 @@ import {
     atualizarStatusService,
     removerLivroService
 } from "../services/library.service";
+import { RequestAutenticada } from "../middlewares/auth.middleware";
 
-/* -- GET /library -- */
-
-export async function minhaBiblioteca(req: Request, res: Response) {
+export async function minhaBiblioteca(req: RequestAutenticada, res: Response) {
     try {
+        const userId = req.usuario?.id;
 
-        const userId = Number(req.query.userId);
+        if (!userId) {
+            return res.status(401).json({
+                erro: "Usuário não autenticado."
+            });
+        }
 
         const livros = await listarBibliotecaService(userId);
 
         return res.status(200).json(livros);
-
-    } catch (error) {
-
+    } catch {
         return res.status(500).json({
             erro: "Erro ao buscar biblioteca."
         });
-
     }
 }
 
-/* -- GET /library/:id -- */
-
-export async function buscarLivro(req: Request, res: Response) {
+export async function buscarLivro(req: RequestAutenticada, res: Response) {
     try {
-
         const id = Number(req.params.id);
+        const userId = req.usuario?.id;
 
-        const livro = await buscarLivroService(id);
+        if (!userId) {
+            return res.status(401).json({
+                erro: "Usuário não autenticado."
+            });
+        }
+
+        const livro = await buscarLivroService(id, userId);
 
         if (!livro) {
             return res.status(404).json({
@@ -44,38 +49,28 @@ export async function buscarLivro(req: Request, res: Response) {
         }
 
         return res.status(200).json(livro);
-
-    } catch (error) {
-
+    } catch {
         return res.status(500).json({
             erro: "Erro ao buscar livro."
         });
-
     }
 }
 
-/* -- POST /library -- */
-
-export async function adicionarLivro(req: Request, res: Response) {
+export async function adicionarLivro(req: RequestAutenticada, res: Response) {
     try {
-
-        const { googleBookId, userId } = req.body;
+        const { googleBookId } = req.body;
+        const userId = req.usuario?.id;
 
         if (!googleBookId || !userId) {
             return res.status(400).json({
-                erro: "googleBookId e userId são obrigatórios."
+                erro: "googleBookId é obrigatório."
             });
         }
 
-        const livro = await adicionarLivroService(
-            googleBookId,
-            Number(userId)
-        );
+        const livro = await adicionarLivroService(googleBookId, userId);
 
         return res.status(201).json(livro);
-
     } catch (error) {
-
         if (error instanceof Error) {
             return res.status(400).json({
                 erro: error.message
@@ -85,44 +80,50 @@ export async function adicionarLivro(req: Request, res: Response) {
         return res.status(500).json({
             erro: "Erro ao adicionar livro."
         });
-
     }
 }
 
-/* -- PUT /library/:id/progress -- */
+export async function atualizarProgresso(_req: Request, res: Response) {
+    await atualizarProgressoService();
 
-export async function atualizarProgresso(req: Request, res: Response) {
     return res.status(501).json({
         mensagem: "Função ainda não implementada."
     });
 }
 
-/* -- PUT /library/:id/status -- */
+export async function atualizarStatus(_req: Request, res: Response) {
+    await atualizarStatusService();
 
-export async function atualizarStatus(req: Request, res: Response) {
     return res.status(501).json({
         mensagem: "Função ainda não implementada."
     });
 }
 
-/* -- DELETE /library/:id -- */
-
-export async function removerLivro(req: Request, res: Response) {
+export async function removerLivro(req: RequestAutenticada, res: Response) {
     try {
-
         const id = Number(req.params.id);
+        const userId = req.usuario?.id;
 
-        await removerLivroService(id);
+        if (!userId) {
+            return res.status(401).json({
+                erro: "Usuário não autenticado."
+            });
+        }
+
+        await removerLivroService(id, userId);
 
         return res.status(200).json({
             mensagem: "Livro removido com sucesso."
         });
-
     } catch (error) {
+        if (error instanceof Error) {
+            return res.status(404).json({
+                erro: error.message
+            });
+        }
 
         return res.status(500).json({
             erro: "Erro ao remover livro."
         });
-
     }
 }

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Lexend, League_Spartan } from "next/font/google";
 import "./globals.css";
+import { Toaster } from "sonner";
 
 
 const lexend = Lexend({
@@ -26,7 +27,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR" className={`${lexend.variable} ${leagueSpartan.variable}`}>
-      <body>{children}</body>
+      <body>{children}
+        <Toaster position="top-right" richColors />
+      </body>
     </html>
   );
 }

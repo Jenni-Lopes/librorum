@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
+import { isAuthenticated } from "@/services/auth.service";
 import { buscarLivros, Livro } from "@/services/book";
 
 const emAltaBooks = [
@@ -23,11 +25,19 @@ const recomendadoBooks = [
   { id: "3R9CDAAAQBAJ", title: "Mentirosos", author: "E. Lockhart", rating: "4.4", cover: "https://books.google.com/books/content?id=3R9CDAAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" }
 ];
 
+
 export default function Home() {
+  const router = useRouter();
   const [busca, setBusca] = useState("");
   const [resultados, setResultados] = useState<Livro[]>([]);
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState("");
+
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      router.replace("/login");
+    }
+  }, [router]);
 
   async function pesquisarLivros() {
     const termo = busca.trim();
