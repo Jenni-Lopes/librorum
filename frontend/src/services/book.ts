@@ -1,3 +1,4 @@
+import { getAuthHeaders } from "./auth.service";
 
 export interface Livro {
   id: string;
@@ -32,20 +33,24 @@ export interface LivroBiblioteca {
   status: "WANT_TO_READ" | "READING" | "FINISHED" | "DROPPED";
 }
 
-function getApiUrl() {
-  const url = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
-  return url.startsWith("http://") || url.startsWith("https://")
-    ? url
-    : "http://localhost:3001";
+export interface CreateLivroBibliotecaDTO {
+  googleBookId: string;
+  userId?: number;
 }
 
-const API_URL = getApiUrl();
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 
-export async function buscarLivros(q: string): Promise<Livro[]> {
+export async function getLivros(
+  busca: string,
+  cookieHeader?: string
+): Promise<Livro[]> {
   const response = await fetch(
-    `${API_URL}/books?q=${encodeURIComponent(q)}`,
+    `${API_URL}/books?q=${encodeURIComponent(busca)}`,
     {
-      method: "GET",
+      headers: {
+        ...getAuthHeaders(),
+        Cookie: cookieHeader ?? "",
+      },
     }
   );
 
@@ -53,11 +58,21 @@ export async function buscarLivros(q: string): Promise<Livro[]> {
     throw new Error("Erro ao buscar livros");
   }
 
-  return response.json();
+  const dados = await response.json();
+
+  return dados;
 }
 
-export async function buscarLivroPorId(id: string): Promise<LivroDetalhe> {
-  const response = await fetch(`${API_URL}/books/${encodeURIComponent(id)}`);
+export async function getLivro(
+  id: string,
+  cookieHeader?: string
+): Promise<LivroDetalhe> {
+  const response = await fetch(`${API_URL}/books/${encodeURIComponent(id)}`, {
+    headers: {
+      ...getAuthHeaders(),
+      Cookie: cookieHeader ?? "",
+    },
+  });
 
   if (!response.ok) {
     throw new Error("Erro ao buscar livro");
@@ -66,26 +81,42 @@ export async function buscarLivroPorId(id: string): Promise<LivroDetalhe> {
   return response.json();
 }
 
-export async function listarBiblioteca(userId = 1): Promise<LivroBiblioteca[]> {
-  const response = await fetch(`${API_URL}/library?userId=${userId}`);
+export async function getBiblioteca(
+  userId?: number,
+  cookieHeader?: string
+): Promise<LivroBiblioteca[]> {
+  const url = userId ? `${API_URL}/library?userId=${userId}` : `${API_URL}/library`;
+
+  const response = await fetch(url, {
+    headers: {
+      ...getAuthHeaders(),
+      Cookie: cookieHeader ?? "",
+    },
+  });
 
   if (!response.ok) {
     throw new Error("Erro ao buscar biblioteca");
   }
 
-  return response.json();
+  const dados = await response.json();
+
+  return dados;
 }
 
-export async function adicionarLivroNaBiblioteca(
-  googleBookId: string,
-  userId = 1
+export async function createLivroBiblioteca(
+  livro: CreateLivroBibliotecaDTO
 ): Promise<LivroBiblioteca> {
   const response = await fetch(`${API_URL}/library`, {
     method: "POST",
+    credentials: "include",
     headers: {
+      ...getAuthHeaders(),
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ googleBookId, userId }),
+    body: JSON.stringify({
+      googleBookId: livro.googleBookId,
+      userId: livro.userId,
+    }),
   });
 
   if (!response.ok) {
@@ -95,3 +126,28 @@ export async function adicionarLivroNaBiblioteca(
 
   return response.json();
 }
+
+export async function deleteLivroBiblioteca(id: number): Promise<void> {
+  const response = await fetch(`${API_URL}/library/${id}`, {
+    method: "DELETE",
+    credentials: "include",
+    headers: getAuthHeaders(),
+  });
+
+  if (!response.ok) {
+    throw new Error("Erro ao remover livro");
+  }
+}
+
+export const buscarLivros = getLivros;
+export const buscarLivroPorId = getLivro;
+export const listarBiblioteca = getBiblioteca;
+
+export async function adicionarLivroNaBiblioteca(
+  googleBookId: string,
+  userId?: number
+): Promise<LivroBiblioteca> {
+  return createLivroBiblioteca({ googleBookId, userId });
+}
+
+export const removerLivroDaBiblioteca = deleteLivroBiblioteca;
