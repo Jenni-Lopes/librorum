@@ -40,6 +40,18 @@ export interface CreateLivroBibliotecaDTO {
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 
+function getHeaders(cookieHeader?: string): HeadersInit {
+  const headers: Record<string, string> = {
+    ...getAuthHeaders(),
+  };
+
+  if (cookieHeader) {
+    headers.Cookie = cookieHeader;
+  }
+
+  return headers;
+}
+
 export async function getLivros(
   busca: string,
   cookieHeader?: string
@@ -47,10 +59,7 @@ export async function getLivros(
   const response = await fetch(
     `${API_URL}/books?q=${encodeURIComponent(busca)}`,
     {
-      headers: {
-        ...getAuthHeaders(),
-        Cookie: cookieHeader ?? "",
-      },
+      headers: getHeaders(cookieHeader),
     }
   );
 
@@ -68,10 +77,7 @@ export async function getLivro(
   cookieHeader?: string
 ): Promise<LivroDetalhe> {
   const response = await fetch(`${API_URL}/books/${encodeURIComponent(id)}`, {
-    headers: {
-      ...getAuthHeaders(),
-      Cookie: cookieHeader ?? "",
-    },
+    headers: getHeaders(cookieHeader),
   });
 
   if (!response.ok) {
@@ -88,10 +94,7 @@ export async function getBiblioteca(
   const url = userId ? `${API_URL}/library?userId=${userId}` : `${API_URL}/library`;
 
   const response = await fetch(url, {
-    headers: {
-      ...getAuthHeaders(),
-      Cookie: cookieHeader ?? "",
-    },
+    headers: getHeaders(cookieHeader),
   });
 
   if (!response.ok) {
