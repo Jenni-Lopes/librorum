@@ -10,26 +10,12 @@ type HeaderProps = {
   focarBusca?: boolean;
 };
 
-type Usuario = {
-  nome?: string;
-};
-
-function getInicialUsuario() {
-  if (typeof window === "undefined") return "L";
-
-  const dadosUsuario = localStorage.getItem("librorum:user");
-  const usuario: Usuario | null = dadosUsuario ? JSON.parse(dadosUsuario) : null;
-
-  return usuario?.nome?.[0]?.toUpperCase() ?? "L";
-}
-
 export default function Header({
   busca = "",
   setBusca,
   pesquisarLivros,
   focarBusca = false,
 }: HeaderProps) {
-  const [inicial] = useState(getInicialUsuario);
   const inputBuscaRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
