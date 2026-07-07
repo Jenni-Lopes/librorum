@@ -45,8 +45,8 @@ export default function Cadastro() {
     }
 
     return (
-        <main className="fixed inset-0 flex items-center justify-center p-6 overflow-hidden">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-4xl w-full items-center">
+        <main className="flex items-center justify-center p-6 overflow-hidden">
+            <div className="grid grid-cols-2 gap-12 max-w-4xl w-full items-center">
 
                 {/* Esquerda */}
                 <div className="flex flex-col items-center text-white text-center">
@@ -77,7 +77,7 @@ export default function Cadastro() {
 
                         {/* E-mail */}
                         <div className="w-full">
-                            <label className="font-spartan block text-3xl font-regular text-[#F5F3FF] mb-6">
+                            <label className="font-spartan block text-3xl font-regular text-[#F5F3FF] mb-1">
                                 E-mail
                             </label>
 
@@ -88,7 +88,7 @@ export default function Cadastro() {
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     placeholder="nome@gmail.com"
-                                    className="font-spartan text-lg w-full pl-14 pr-4 py-3 bg-transparent border-2 border-[#8B5CF6]/60 rounded-xl text-white placeholder-[#A1A1AA] outline-none transition-all duration-300 drop-shadow-[3px_3px_20px_rgba(124,58,237,0.3)] focus:border-[#a78bfa]"
+                                    className="font-spartan text-lg w-full pl-14 pr-4 py-3 bg-transparent border-2 border-[#8B5CF6]/60 rounded-xl text-white placeholder-[#A1A1AA] outline-none transition-all duration-300 focus:border-[#a78bfa]"
                                 />
                             </div>
                         </div>
@@ -105,7 +105,7 @@ export default function Cadastro() {
                                     value={nome}
                                     onChange={(e) => setNome(e.target.value)}
                                     placeholder="Username"
-                                    className="font-spartan text-lg w-full pl-14 pr-4 py-3 bg-transparent border-2 border-[#8B5CF6]/60 rounded-xl text-white placeholder-[#A1A1AA] outline-none transition-all duration-300 drop-shadow-[3px_3px_20px_rgba(124,58,237,0.3)] focus:border-[#a78bfa]"
+                                    className="font-spartan text-lg w-full pl-14 pr-4 py-3 bg-transparent border-2 border-[#8B5CF6]/60 rounded-xl text-white placeholder-[#A1A1AA] outline-none transition-all duration-300 focus:border-[#a78bfa]"
                                 />
                             </div>
                         </div>
@@ -122,7 +122,7 @@ export default function Cadastro() {
                                     value={senha}
                                     onChange={(e) => setSenha(e.target.value)}
                                     placeholder="senha"
-                                    className="font-spartan text-lg w-full pl-14 pr-12 py-3 bg-transparent border-2 border-[#8B5CF6]/60 rounded-xl text-white placeholder-[#A1A1AA] outline-none transition-all duration-300 drop-shadow-[3px_3px_20px_rgba(124,58,237,0.3)] focus:border-[#a78bfa]"
+                                    className="font-spartan text-lg w-full pl-14 pr-12 py-3 bg-transparent border-2 border-[#8B5CF6]/60 rounded-xl text-white placeholder-[#A1A1AA] outline-none transition-all duration-300 focus:border-[#a78bfa]"
                                 />
                                 <button
                                     type="button"
@@ -146,7 +146,7 @@ export default function Cadastro() {
                                     value={confSenha}
                                     onChange={(e) => setConfSenha(e.target.value)}
                                     placeholder="confirmar senha"
-                                    className="font-spartan text-lg w-full pl-14 pr-12 py-3 bg-transparent border-2 border-[#8B5CF6]/60 rounded-xl text-white placeholder-[#A1A1AA] outline-none transition-all duration-300 drop-shadow-[3px_3px_20px_rgba(124,58,237,0.3)] focus:border-[#a78bfa]"
+                                    className="font-spartan text-lg w-full pl-14 pr-12 py-3 bg-transparent border-2 border-[#8B5CF6]/60 rounded-xl text-white placeholder-[#A1A1AA] outline-none transition-all duration-300 focus:border-[#a78bfa]"
                                 />
                                 <button
                                     type="button"

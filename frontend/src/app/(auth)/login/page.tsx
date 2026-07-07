@@ -70,7 +70,7 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="nome@gmail.com"
-              className="font-spartan text-lg w-full pl-14 pr-4 py-3 bg-transparent border-2 border-[#8B5CF6]/60 rounded-xl text-white placeholder-[#A1A1AA] outline-none transition-all duration-300 drop-shadow-[3px_3px_20px_rgba(124,58,237,0.3)] focus:border-[#a78bfa]"
+              className="font-spartan text-lg w-full pl-14 pr-4 py-3 bg-transparent border-2 border-[#8B5CF6]/60 rounded-xl text-white placeholder-[#A1A1AA] outline-none transition-all duration-300 focus:border-[#a78bfa]"
             />
           </div>
         </div>
@@ -87,7 +87,7 @@ export default function LoginPage() {
               value={senha}
               onChange={(e) => setSenha(e.target.value)}
               placeholder="senha"
-              className="font-spartan text-lg w-full pl-14 pr-12 py-3 bg-transparent border-2 border-[#8B5CF6]/60 rounded-xl text-white placeholder-[#A1A1AA] outline-none transition-all duration-300 drop-shadow-[3px_3px_20px_rgba(124,58,237,0.3)] focus:border-[#a78bfa]"
+              className="font-spartan text-lg w-full pl-14 pr-12 py-3 bg-transparent border-2 border-[#8B5CF6]/60 rounded-xl text-white placeholder-[#A1A1AA] outline-none transition-all duration-300 focus:border-[#a78bfa]"
             />
 
             <button
