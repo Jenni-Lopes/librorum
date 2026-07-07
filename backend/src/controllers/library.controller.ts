@@ -7,34 +7,37 @@ import {
     atualizarStatusService,
     removerLivroService
 } from "../services/library.service";
-import { RequestAutenticada } from "../middlewares/auth.middleware";
+import { AuthPayload } from "../tipos/auth-payload";
 
-export async function minhaBiblioteca(
+function getUsuarioId(res: Response) {
+    const usuario = res.locals.user as AuthPayload | undefined;
+    return usuario?.id;
+}
 
-    req: RequestAutenticada,
-    res: Response
-) {
-
+export async function minhaBiblioteca(_req: Request, res: Response) {
     try {
+        const userId = getUsuarioId(res);
 
-        const userId = req.usuario!.id;
+        if (!userId) {
+            return res.status(401).json({
+                erro: "Usuário não autenticado."
+            });
+        }
+
         const livros = await listarBibliotecaService(userId);
+
         return res.status(200).json(livros);
-    }
-
-    catch {
-
+    } catch {
         return res.status(500).json({
             erro: "Erro ao buscar biblioteca."
         });
     }
-
 }
 
-export async function buscarLivro(req: RequestAutenticada, res: Response) {
+export async function buscarLivro(req: Request, res: Response) {
     try {
+        const userId = getUsuarioId(res);
         const id = Number(req.params.id);
-        const userId = req.usuario?.id;
 
         if (!userId) {
             return res.status(401).json({
@@ -58,9 +61,16 @@ export async function buscarLivro(req: RequestAutenticada, res: Response) {
     }
 }
 
-export async function adicionarLivro(req: RequestAutenticada, res: Response) {
+export async function adicionarLivro(req: Request, res: Response) {
     try {
+        const userId = getUsuarioId(res);
         const { googleBookId } = req.body;
+
+        if (!userId) {
+            return res.status(401).json({
+                erro: "Usuário não autenticado."
+            });
+        }
 
         if (!googleBookId) {
             return res.status(400).json({
@@ -68,15 +78,10 @@ export async function adicionarLivro(req: RequestAutenticada, res: Response) {
             });
         }
 
-        const livro = await adicionarLivroService(
-            googleBookId,
-            req.usuario!.id
-        );
+        const livro = await adicionarLivroService(googleBookId, userId);
 
         return res.status(201).json(livro);
-
     } catch (error) {
-
         if (error instanceof Error) {
             return res.status(400).json({
                 erro: error.message
@@ -86,7 +91,6 @@ export async function adicionarLivro(req: RequestAutenticada, res: Response) {
         return res.status(500).json({
             erro: "Erro ao adicionar livro."
         });
-
     }
 }
 
@@ -106,10 +110,10 @@ export async function atualizarStatus(_req: Request, res: Response) {
     });
 }
 
-export async function removerLivro(req: RequestAutenticada, res: Response) {
+export async function removerLivro(req: Request, res: Response) {
     try {
+        const userId = getUsuarioId(res);
         const id = Number(req.params.id);
-        const userId = req.usuario?.id;
 
         if (!userId) {
             return res.status(401).json({

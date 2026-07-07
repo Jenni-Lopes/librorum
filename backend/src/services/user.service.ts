@@ -1,73 +1,63 @@
 import prisma from "../prisma/client";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
-type DadosCadastro = {
-    nome: string;
-    email: string;
-    senha: string;
-};
+export async function cadastrarUsuarioService(
+  nome: string,
+  email: string,
+  senha: string,
+) {
+  const usuarioExistente = await prisma.user.findUnique({
+    where: { email },
+  });
 
-type DadosLogin = {
-    email: string;
-    senha: string;
-};
+  if (usuarioExistente) {
+    throw new Error("Este e-mail já está cadastrado.");
+  }
 
-const SALT_ROUNDS = 10;
+  const senhaHash = await bcrypt.hash(senha, 10);
 
-export async function cadastrarUsuarioService(dados: DadosCadastro) {
-    const usuarioExistente = await prisma.user.findUnique({
-        where: {
-            email: dados.email,
-        },
-    });
-
-    if (usuarioExistente) {
-        throw new Error("Este e-mail já está cadastrado.");
-    }
-
-    const senhaCriptografada = await bcrypt.hash(
-        dados.senha,
-        SALT_ROUNDS
-    );
-
-    return await prisma.user.create({
-        data: {
-            nome: dados.nome,
-            email: dados.email,
-            senha: senhaCriptografada,
-        },
-        select: {
-            id: true,
-            nome: true,
-            email: true,
-            createdAt: true,
-        },
-    });
+  return prisma.user.create({
+    data: {
+      nome,
+      email,
+      senha: senhaHash,
+    },
+    select: {
+      id: true,
+      nome: true,
+      email: true,
+      createdAt: true,
+    },
+  });
 }
 
-export async function loginUsuarioService(dados: DadosLogin) {
-    const usuario = await prisma.user.findUnique({
-        where: {
-            email: dados.email,
-        },
-    });
+export async function loginUsuarioService(email: string, senha: string) {
+  const usuario = await prisma.user.findUnique({
+    where: { email },
+  });
 
-    if (!usuario) {
-        throw new Error("Usuário ou senha inválidos.");
-    }
+  if (!usuario) {
+    throw new Error("Email ou senha inválidos.");
+  }
 
-    const senhaCorreta = await bcrypt.compare(
-        dados.senha,
-        usuario.senha
-    );
+  const senhaCorreta = await bcrypt.compare(senha, usuario.senha);
 
-    if (!senhaCorreta) {
-        throw new Error("Usuário ou senha inválidos.");
-    }
+  if (!senhaCorreta) {
+    throw new Error("Email ou senha inválidos.");
+  }
 
-    return {
-        id: usuario.id,
-        nome: usuario.nome,
-        email: usuario.email,
-    };
+  const token = jwt.sign(
+    {
+      id: usuario.id,
+    },
+    process.env.JWT_SECRET!,
+    {
+      expiresIn: "1d",
+    },
+  );
+
+  return {
+    token,
+  };
 }

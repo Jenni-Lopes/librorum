@@ -1,40 +1,29 @@
-import { NextFunction, Request, Response } from "express";
-import { validarToken } from "../utils/jwt";
+import jwt from "jsonwebtoken";
+import { Request, Response,NextFunction } from "express";
+import { AuthPayload } from "../tipos/auth-payload";
 
-export type UsuarioAutenticado = {
-    id: number;
-    nome: string;
-    email: string;
-};
 
-export type RequestAutenticada = Request & {
-    usuario?: UsuarioAutenticado;
-};
+export function authMiddleware(req:Request, res:Response, next: NextFunction)
+{
+    const token = req.cookies.token;
 
-export function autenticarToken(
-    req: RequestAutenticada,
-    res: Response,
-    next: NextFunction
-) {
-    const authHeader = req.headers.authorization;
-    const token = authHeader?.startsWith("Bearer ")
-        ? authHeader.replace("Bearer ", "")
-        : null;
-
-    if (!token) {
-        return res.status(401).json({
-            erro: "Token não informado.",
+    if(!token)
+    {
+        return res.status(400).json({
+            message: "Não autenticado",
         });
     }
 
-    try {
-        req.usuario = validarToken(token);
-        return next();
-    } catch (error) {
-        const mensagem = error instanceof Error ? error.message : "Token inválido.";
+    try{
+        const payload =jwt.verify(token,process.env.JWT_SECRET!) as AuthPayload
+        
+        res.locals.user = payload;
 
+        next();
+    }
+    catch{
         return res.status(401).json({
-            erro: mensagem,
+            message: "Token inválido",
         });
     }
 }
