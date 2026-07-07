@@ -1,19 +1,45 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 
 type HeaderProps = {
   busca?: string;
   setBusca?: React.Dispatch<React.SetStateAction<string>>;
   pesquisarLivros?: () => void;
+  focarBusca?: boolean;
 };
+
+type Usuario = {
+  nome?: string;
+};
+
+function getInicialUsuario() {
+  if (typeof window === "undefined") return "L";
+
+  const dadosUsuario = localStorage.getItem("librorum:user");
+  const usuario: Usuario | null = dadosUsuario ? JSON.parse(dadosUsuario) : null;
+
+  return usuario?.nome?.[0]?.toUpperCase() ?? "L";
+}
 
 export default function Header({
   busca = "",
   setBusca,
   pesquisarLivros,
+  focarBusca = false,
 }: HeaderProps) {
+  const [inicial] = useState(getInicialUsuario);
+  const inputBuscaRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (focarBusca) {
+      inputBuscaRef.current?.focus();
+    }
+  }, [focarBusca]);
+
   return (
     <header className="flex justify-between items-center mb-8">
-      {/* barra de pesquisar */}
       <div className="relative w-full max-w-md">
         <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
           <Image
@@ -26,6 +52,7 @@ export default function Header({
         </span>
 
         <input
+          ref={inputBuscaRef}
           type="text"
           value={busca}
           onChange={(e) => setBusca?.(e.target.value)}
@@ -40,7 +67,7 @@ export default function Header({
       </div>
 
       <div className="w-10 h-10 rounded-full border-2 border-[#8c52ff] bg-linear-to-tr from-[#362A67] to-[#8c52ff] flex items-center justify-center text-white font-bold font-lexend text-sm overflow-hidden cursor-pointer shadow-[0_0_10px_rgba(140,82,255,0.3)]">
-        L
+        {inicial}
       </div>
     </header>
   );
