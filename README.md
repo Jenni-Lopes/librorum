@@ -8,8 +8,6 @@ Este projeto foi desenvolvido como o Trabalho Final para a disciplina **XDES03 �
 
 ## Demonstração (Screenshots do Sistema)
 
-Adicione aqui as imagens do sistema para ilustrar o funcionamento da aplicação conforme os requisitos do trabalho:
-
 ### 1. Tela de Login e Cadastro de Usuário
 *Interface para autenticação de usuários, contendo validações completas de campos vazios, formato de e-mail e tamanho mínimo de senha utilizando a biblioteca Zod.*
 
