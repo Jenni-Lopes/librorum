@@ -125,8 +125,15 @@ export default function PerfilPage() {
     }
 
     try {
-      await salvarMetaAtual(valorMeta);
-      window.location.reload();
+      const metaSalva = await salvarMetaAtual(valorMeta);
+      setMeta(String(metaSalva.target));
+      
+     
+      window.dispatchEvent(
+        new CustomEvent("librorum:meta-atualizada", {
+          detail: { target: metaSalva.target },
+        })
+      );
     } catch (error) {
       console.error("Erro ao salvar meta:", error);
     }
