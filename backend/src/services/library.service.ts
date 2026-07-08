@@ -77,10 +77,6 @@ export async function buscarLivroService(id: number, userId: number) {
     });
 }
 
-export async function atualizarProgressoService() {
-    // Implementar quando o progresso de leitura for usado na interface.
-}
-
 export async function atualizarStatusService(
     id: number,
     userId: number,
