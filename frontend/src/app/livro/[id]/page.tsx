@@ -4,9 +4,9 @@ import React, { useEffect, useState, use } from "react";
 import Link from "next/link";
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
-import LibraryStatusCard from "@/components/LivroStatus";
-import EvaluateBookCard from "@/components/AvaliacaoLivro";
-import BookReviewsSection from "@/components/Avaliacoes";
+import LivroStatus from "@/components/LivroStatus";
+import AvaliacaoLivro from "@/components/AvaliacaoLivro";
+import Avaliacoes from "@/components/Avaliacoes";
 import InfoLivro, { DadosLivro } from "@/components/InfoLivro";
 import {
   adicionarLivroNaBiblioteca,
@@ -156,7 +156,7 @@ export default function BookDetailsPage({ params }: { params: Promise<{ id: stri
     <main className="flex h-screen w-full overflow-hidden bg-[#15131D] text-[#F5F3FF]">
       <Sidebar />
 
-      <div className="flex-1 p-8 overflow-y-auto h-full flex flex-col bg-[#15131D] no-scrollbar">
+      <div className="flex-1 p-8 overflow-y-auto h-full flex flex-col bg-[#15131D]">
         <Header />
 
         <div className="mb-6">
@@ -174,12 +174,12 @@ export default function BookDetailsPage({ params }: { params: Promise<{ id: stri
           <InfoLivro bookData={bookData} />
 
           <div className="col-span-4 flex flex-col gap-6 w-full">
-            <LibraryStatusCard
+            <LivroStatus
               selectedStatus={selectedStatus}
               onStatusChange={handleStatusChange}
             />
 
-            <EvaluateBookCard
+            <AvaliacaoLivro
               userRating={userRating}
               setUserRating={setUserRating}
               hoverRating={hoverRating}
@@ -197,7 +197,7 @@ export default function BookDetailsPage({ params }: { params: Promise<{ id: stri
         </div>
 
         {/* Seção de avaliações */}
-        <BookReviewsSection reviews={reviews} />
+        <Avaliacoes reviews={reviews} />
       </div>
     </main>
   );

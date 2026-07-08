@@ -138,7 +138,7 @@ export default function PerfilPage() {
     <main className="flex h-screen w-full overflow-hidden bg-[#15131D] text-[#F5F3FF]">
       <Sidebar />
 
-      <div className="flex-1 p-8 overflow-y-auto bg-[#15131D] no-scrollbar">
+      <div className="flex-1 p-8 overflow-y-auto bg-[#15131D]">
         <Header />
 
         <section className="bg-[#181424] border border-[#3b2d63] rounded-xl p-5 mb-6">

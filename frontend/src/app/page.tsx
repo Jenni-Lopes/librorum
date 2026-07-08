@@ -116,7 +116,7 @@ export default function Biblioteca() {
     <main className="flex h-screen w-full overflow-hidden bg-[#15131D] text-[#F5F3FF]">
       <Sidebar />
 
-      <div className="flex-1 p-8 overflow-y-auto h-full flex flex-col bg-[#15131D] no-scrollbar">
+      <div className="flex-1 p-8 overflow-y-auto h-full flex flex-col bg-[#15131D]">
         <Header busca={busca} setBusca={setBusca} pesquisarLivros={pesquisarLivros} />
 
         <section className="mb-6 shrink-0">

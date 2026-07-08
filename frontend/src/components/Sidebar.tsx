@@ -59,7 +59,7 @@ export default function Sidebar() {
   }
 
   return (
-    <aside className="w-80 bg-[#0F0C18] border-r border-[#3b2d63] flex flex-col p-6 h-screen overflow-y-auto no-scrollbar shrink-0">
+    <aside className="w-80 bg-[#0F0C18] border-r border-[#3b2d63] flex flex-col p-6 h-screen overflow-y-auto shrink-0">
       <div className="flex items-center justify-center mb-8">
         <Image
           src="/imagens/iconLogo.png"
