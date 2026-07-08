@@ -13,19 +13,22 @@ Adicione aqui as imagens do sistema para ilustrar o funcionamento da aplicação
 ### 1. Tela de Login e Cadastro de Usuário
 *Interface para autenticação de usuários, contendo validações completas de campos vazios, formato de e-mail e tamanho mínimo de senha utilizando a biblioteca Zod.*
 
+![Tela de cadastro](prints/loginPrint.png )
+![Tela de login](prints/CadastresePrint.png)
 
 ### 2. Biblioteca Virtual (Painel Principal)
 *Exibição dos livros salvos na coleção do usuário, com nota pessoal e status de leitura (Quero Ler, Lendo, Lido, Abandonado).*
 
-
+![Biblioteca](prints/bibliotecaPrint.png)
 
 ### 3. Busca de Livros (Integração com API Externa)
 *Tela de busca de livros que consome a API do Google Books para exibição rápida de títulos, autores, páginas e capas.*
 
+![Tela de busca](prints/buscaPrint.png)
 
-
-### 4. Resenhas (Reviews) e Metas de Leitura
+### 4. Perfil
 *Espaço para acompanhar as metas de leitura e gerenciar o CRUD de avaliações escritas de cada livro.*
+![Tela de perfil](prints/perfilPrint.png)
 
 ---
 
