@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const TOKEN_KEY = "librorum:token";
+const TOKEN_KEY = "token";
 const privateRoutes = ["/", "/livro", "/perfil"];
 const authRoutes = ["/login", "/cadastro"];
 

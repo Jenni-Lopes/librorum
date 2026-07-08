@@ -1,8 +1,7 @@
 import { CadastroDTO, LoginDTO, LoginResponse } from "@/types/auth";
 
-const TOKEN_KEY = "librorum:token";
+const LEGACY_TOKEN_KEY = "librorum:token";
 const USER_KEY = "librorum:user";
-const TOKEN_MAX_AGE_SECONDS = 60 * 60 * 24;
 
 function getApiUrl() {
   const url = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
@@ -35,9 +34,9 @@ export async function login(dados: LoginDTO): Promise<LoginResponse> {
   const data: LoginResponse = await response.json();
 
   if (typeof window !== "undefined") {
-    localStorage.setItem(TOKEN_KEY, data.token);
+    localStorage.removeItem(LEGACY_TOKEN_KEY);
     localStorage.setItem(USER_KEY, JSON.stringify(data.user));
-    document.cookie = `${TOKEN_KEY}=${data.token}; path=/; max-age=${TOKEN_MAX_AGE_SECONDS}; SameSite=Lax`;
+    document.cookie = `${LEGACY_TOKEN_KEY}=; path=/; max-age=0; SameSite=Lax`;
   }
 
   return data;
@@ -60,9 +59,9 @@ export async function cadastro(dados: CadastroDTO): Promise<void> {
 
 export async function sair(): Promise<void> {
   if (typeof window !== "undefined") {
-    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(LEGACY_TOKEN_KEY);
     localStorage.removeItem(USER_KEY);
-    document.cookie = `${TOKEN_KEY}=; path=/; max-age=0; SameSite=Lax`;
+    document.cookie = `${LEGACY_TOKEN_KEY}=; path=/; max-age=0; SameSite=Lax`;
   }
 
   const response = await fetch(`${API_URL}/auth/sair`, {
@@ -75,21 +74,7 @@ export async function sair(): Promise<void> {
   }
 }
 
-export function getToken() {
-  if (typeof window === "undefined") return null;
-  return localStorage.getItem(TOKEN_KEY);
-}
-
 export function isAuthenticated() {
-  return Boolean(getToken());
-}
-
-export function getAuthHeaders(): Record<string, string> {
-  const token = getToken();
-
-  return token
-    ? {
-        Authorization: `Bearer ${token}`,
-      }
-    : {};
+  if (typeof window === "undefined") return false;
+  return Boolean(localStorage.getItem(USER_KEY));
 }

@@ -1,5 +1,3 @@
-import { getAuthHeaders } from "./auth.service";
-
 export interface Livro {
   id: string;
   titulo: string;
@@ -44,9 +42,7 @@ export interface CreateLivroBibliotecaDTO {
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 
 function getHeaders(cookieHeader?: string): HeadersInit {
-  const headers: Record<string, string> = {
-    ...getAuthHeaders(),
-  };
+  const headers: Record<string, string> = {};
 
   if (cookieHeader) {
     headers.Cookie = cookieHeader;
@@ -119,7 +115,6 @@ export async function createLivroBiblioteca(
     method: "POST",
     credentials: "include",
     headers: {
-      ...getAuthHeaders(),
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
@@ -141,7 +136,6 @@ export async function deleteLivroBiblioteca(id: number): Promise<void> {
   const response = await fetch(`${API_URL}/library/${id}`, {
     method: "DELETE",
     credentials: "include",
-    headers: getAuthHeaders(),
   });
 
   if (!response.ok) {

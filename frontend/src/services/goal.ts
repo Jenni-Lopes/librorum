@@ -1,5 +1,3 @@
-import { getAuthHeaders } from "./auth.service";
-
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 
 export interface MetaLeitura {
@@ -10,7 +8,6 @@ export interface MetaLeitura {
 export async function buscarMetaAtual(): Promise<MetaLeitura> {
   const response = await fetch(`${API_URL}/goals/current`, {
     credentials: "include",
-    headers: getAuthHeaders(),
   });
 
   if (!response.ok) {
@@ -25,7 +22,6 @@ export async function salvarMetaAtual(target: number): Promise<MetaLeitura> {
     method: "PUT",
     credentials: "include",
     headers: {
-      ...getAuthHeaders(),
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ target }),

@@ -1,5 +1,3 @@
-import { getAuthHeaders } from "./auth.service";
-
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 
 export interface ReviewApi {
@@ -18,7 +16,6 @@ export interface ReviewApi {
 export async function listarMinhasAvaliacoes(): Promise<ReviewApi[]> {
   const response = await fetch(`${API_URL}/reviews/me`, {
     credentials: "include",
-    headers: getAuthHeaders(),
   });
 
   if (!response.ok) {
@@ -31,7 +28,6 @@ export async function listarMinhasAvaliacoes(): Promise<ReviewApi[]> {
 export async function listarAvaliacoes(googleBookId: string): Promise<ReviewApi[]> {
   const response = await fetch(`${API_URL}/reviews/${encodeURIComponent(googleBookId)}`, {
     credentials: "include",
-    headers: getAuthHeaders(),
   });
 
   if (!response.ok) {
@@ -50,7 +46,6 @@ export async function salvarAvaliacao(
     method: "POST",
     credentials: "include",
     headers: {
-      ...getAuthHeaders(),
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
@@ -72,7 +67,6 @@ export async function deletarAvaliacao(id: number): Promise<void> {
   const response = await fetch(`${API_URL}/reviews/${id}`, {
     method: "DELETE",
     credentials: "include",
-    headers: getAuthHeaders(),
   });
 
   if (!response.ok) {

@@ -29,6 +29,8 @@ export async function login(req: Request, res: Response) {
       httpOnly: true,
       secure: false,
       sameSite: "lax",
+      path: "/",
+      maxAge: 1000 * 60 * 60 * 24,
     });
 
     res.json({
@@ -44,7 +46,9 @@ export async function login(req: Request, res: Response) {
 }
 
 export async function sair(_req: Request, res: Response) {
-  res.clearCookie("token");
+  res.clearCookie("token", {
+    path: "/",
+  });
   res.json({
     success: true,
   });
