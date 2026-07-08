@@ -1,14 +1,12 @@
 # Librorum
 
-O **Librorum** é uma plataforma web para organização e acompanhamento pessoal de leitura. Com ele, os usuários podem gerenciar sua própria biblioteca virtual, registrar o progresso de leitura de cada obra (páginas lidas e percentual), escrever resenhas/dar notas e definir metas de leitura anuais. A aplicação conta também com integração à API externa do Google Books para busca e detalhamento automatizado de obras.
+O **Librorum** é uma plataforma web para organização e acompanhamento pessoal de leitura. Com ele, os usuários podem gerenciar sua própria biblioteca virtual, escrever resenhas/dar notas e definir metas de leitura anuais. A aplicação conta também com integração à API externa do Google Books para busca e detalhamento automatizado de obras.
 
 Este projeto foi desenvolvido como o Trabalho Final para a disciplina **XDES03 – Programação Web** da **Universidade Federal de Itajubá (UNIFEI)**, sob a orientação do Prof. Phyllipe de Souza Lima Francisco.
 
 ---
 
 ## Demonstração (Screenshots do Sistema)
-
-Adicione aqui as imagens do sistema para ilustrar o funcionamento da aplicação conforme os requisitos do trabalho:
 
 ### 1. Tela de Login e Cadastro de Usuário
 *Interface para autenticação de usuários, contendo validações completas de campos vazios, formato de e-mail e tamanho mínimo de senha utilizando a biblioteca Zod.*
@@ -25,10 +23,12 @@ Adicione aqui as imagens do sistema para ilustrar o funcionamento da aplicação
 *Tela de busca de livros que consome a API do Google Books para exibição rápida de títulos, autores, páginas e capas.*
 
 ![Tela de busca](prints/buscaPrint.png)
+![Tela do livro](prints/livroPrint.png)
 
 ### 4. Perfil
 *Espaço para acompanhar as metas de leitura e gerenciar o CRUD de avaliações escritas de cada livro.*
 ![Tela de perfil](prints/perfilPrint.png)
+![Tela com resenha](prints/resenhaPrint.png)
 
 ---
 
