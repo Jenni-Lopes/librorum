@@ -4,8 +4,8 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
-import BookCard from "@/components/BookCard";
 import SearchBookCard from "@/components/SearchBookCard";
+import SecaoLivros from "@/components/SecaoLivros";
 import { toast } from "sonner";
 import { Bookmark, BookOpen, XCircle, CheckCircle } from "lucide-react";
 import {
@@ -20,7 +20,6 @@ export default function Biblioteca() {
   const [activeTab, setActiveTab] = useState<string>("livros");
   const [busca, setBusca] = useState<string>("");
   const [resultados, setResultados] = useState<Livro[]>([]);
-  const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState("");
   const [biblioteca, setBiblioteca] = useState<LivroBiblioteca[]>([]);
 
@@ -47,15 +46,12 @@ export default function Biblioteca() {
     }
 
     try {
-      setCarregando(true);
       setErro("");
       const livros = await buscarLivros(termo);
       setResultados(livros);
     } catch {
       setErro("Não foi possível buscar livros agora.");
       setResultados([]);
-    } finally {
-      setCarregando(false);
     }
   }
 
@@ -109,6 +105,13 @@ export default function Biblioteca() {
   const lidosList = biblioteca.filter((book) => book.status === "FINISHED");
   const abandonadosList = biblioteca.filter((book) => book.status === "DROPPED");
 
+  // Template comum de estado vazio
+  const padraoEmptyState = (
+    <div className="flex flex-col items-center justify-center py-10 bg-[#181424] border border-[#3b2d63] rounded-2xl text-center">
+      <p className="text-sm text-[#A5A1B8] font-spartan">Nenhum livro nesta seção.</p>
+    </div>
+  );
+
   return (
     <main className="flex h-screen w-full overflow-hidden bg-[#15131D] text-[#F5F3FF]">
       <Sidebar />
@@ -121,8 +124,7 @@ export default function Biblioteca() {
           <p className="text-sm text-[#A5A1B8] font-spartan mt-1">Organize e acompanhe suas leituras.</p>
         </section>
 
-        
-        {(carregando || erro || resultados.length > 0) && (
+        {(erro || resultados.length > 0) && (
           <section className="mb-8 bg-[#181424]/30 border border-[#3b2d63]/50 rounded-3xl p-6 relative">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-base font-bold font-lexend text-white uppercase tracking-wider">
@@ -135,17 +137,10 @@ export default function Biblioteca() {
               )}
             </div>
 
-            {carregando && (
-              <div className="flex items-center gap-3 py-4">
-                <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-[#8c52ff]" />
-                <p className="text-sm text-[#A5A1B8] font-spartan">Buscando livros...</p>
-              </div>
-            )}
-
             {erro && <p className="text-sm text-red-400 font-spartan py-2">{erro}</p>}
 
-            {!carregando && !erro && (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5">
+            {!erro && (
+              <div className="grid grid-cols-4 gap-5">
                 {resultados.map((book) => (
                   <SearchBookCard key={book.id} book={book} />
                 ))}
@@ -179,101 +174,47 @@ export default function Biblioteca() {
         </div>
 
         <div className="flex flex-col gap-10">
-          
+          {/* Prateleira: Quero ler */}
           {(activeTab === "livros" || activeTab === "quero-ler") && (
-            <section>
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="flex items-center gap-2.5 text-base font-bold font-lexend text-white uppercase tracking-wider">
-                  <Bookmark className="w-5 h-5 text-[#8c52ff]" />
-                  Quero ler{" "}
-                  <span className="text-xs text-[#A5A1B8] font-normal lowercase font-spartan ml-1.5">
-                    {queroLerList.length} {queroLerList.length === 1 ? "livro" : "livros"}
-                  </span>
-                </h2>
-              </div>
-
-              {queroLerList.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-10 bg-[#181424] border border-[#3b2d63] rounded-2xl text-center">
-                  <p className="text-sm text-[#A5A1B8] font-spartan">Nenhum livro nesta seção.</p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-5">
-                  {queroLerList.map((book) => (
-                    <BookCard key={book.id} book={book} onRemove={handleRemoveBook} />
-                  ))}
-                </div>
-              )}
-            </section>
+            <SecaoLivros
+              titulo="Quero ler"
+              icone={<Bookmark className="w-5 h-5 text-[#8c52ff]" />}
+              livros={queroLerList}
+              onRemove={handleRemoveBook}
+              emptyState={padraoEmptyState}
+            />
           )}
 
-          
+          {/* Prateleira: Lendo */}
           {(activeTab === "livros" || activeTab === "lendo") && (
-            <section>
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="flex items-center gap-2.5 text-base font-bold font-lexend text-white uppercase tracking-wider">
-                  <BookOpen className="w-5 h-5 text-[#8c52ff]" />
-                  Lendo{" "}
-                  <span className="text-xs text-[#A5A1B8] font-normal lowercase font-spartan ml-1.5">
-                    {lendoList.length} {lendoList.length === 1 ? "livro" : "livros"}
-                  </span>
-                </h2>
-              </div>
-
-              {lendoList.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-10 bg-[#181424] border border-[#3b2d63] rounded-2xl text-center">
-                  <p className="text-sm text-[#A5A1B8] font-spartan">Nenhum livro nesta seção.</p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-5">
-                  {lendoList.map((book) => (
-                    <BookCard key={book.id} book={book} onRemove={handleRemoveBook} />
-                  ))}
-                </div>
-              )}
-            </section>
+            <SecaoLivros
+              titulo="Lendo"
+              icone={<BookOpen className="w-5 h-5 text-[#8c52ff]" />}
+              livros={lendoList}
+              onRemove={handleRemoveBook}
+              emptyState={padraoEmptyState}
+            />
           )}
 
-          
+          {/* Prateleira: Lidos */}
           {(activeTab === "livros" || activeTab === "lidos") && (
-            <section className="mb-6">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="flex items-center gap-2.5 text-base font-bold font-lexend text-white uppercase tracking-wider">
-                  <CheckCircle className="w-5 h-5 text-[#8c52ff]" />
-                  Lidos{" "}
-                  <span className="text-xs text-[#A5A1B8] font-normal lowercase font-spartan ml-1.5">
-                    {lidosList.length} {lidosList.length === 1 ? "livro" : "livros"}
-                  </span>
-                </h2>
-              </div>
-
-              {lidosList.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-10 bg-[#181424] border border-[#3b2d63] rounded-2xl text-center">
-                  <p className="text-sm text-[#A5A1B8] font-spartan">Nenhum livro nesta seção.</p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-5">
-                  {lidosList.map((book) => (
-                    <BookCard key={book.id} book={book} onRemove={handleRemoveBook} />
-                  ))}
-                </div>
-              )}
-            </section>
+            <SecaoLivros
+              titulo="Lidos"
+              icone={<CheckCircle className="w-5 h-5 text-[#8c52ff]" />}
+              livros={lidosList}
+              onRemove={handleRemoveBook}
+              emptyState={padraoEmptyState}
+            />
           )}
 
-          
+          {/* Prateleira: Abandonados */}
           {activeTab === "abandonados" && (
-            <section className="mb-6">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="flex items-center gap-2.5 text-base font-bold font-lexend text-white uppercase tracking-wider">
-                  <XCircle className="w-5 h-5 text-[#8c52ff]" />
-                  Abandonados{" "}
-                  <span className="text-xs text-[#A5A1B8] font-normal lowercase font-spartan ml-1.5">
-                    {abandonadosList.length} {abandonadosList.length === 1 ? "livro" : "livros"}
-                  </span>
-                </h2>
-              </div>
-
-              {abandonadosList.length === 0 ? (
+            <SecaoLivros
+              titulo="Abandonados"
+              icone={<XCircle className="w-5 h-5 text-[#8c52ff]" />}
+              livros={abandonadosList}
+              onRemove={handleRemoveBook}
+              emptyState={
                 <div className="flex flex-col items-center justify-center py-16 px-4 bg-[#181424] border border-[#3b2d63] rounded-2xl text-center">
                   <XCircle className="w-12 h-12 text-[#3b2d63] opacity-40 mb-4" />
                   <h3 className="text-base font-lexend font-semibold text-white">Nenhum livro abandonado</h3>
@@ -281,14 +222,8 @@ export default function Biblioteca() {
                     Muito bem! Você não abandonou nenhuma de suas leituras recentemente.
                   </p>
                 </div>
-              ) : (
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-5">
-                  {abandonadosList.map((book) => (
-                    <BookCard key={book.id} book={book} onRemove={handleRemoveBook} />
-                  ))}
-                </div>
-              )}
-            </section>
+              }
+            />
           )}
         </div>
       </div>

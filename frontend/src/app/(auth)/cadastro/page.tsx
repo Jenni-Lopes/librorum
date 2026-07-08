@@ -46,7 +46,7 @@ export default function Cadastro() {
 
     return (
         <main className="fixed inset-0 flex items-center justify-center p-6 overflow-hidden">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-4xl w-full items-center">
+            <div className="grid grid-cols-2 gap-12 max-w-4xl w-full items-center">
 
                 {/* Esquerda */}
                 <div className="flex flex-col items-center text-white text-center">
