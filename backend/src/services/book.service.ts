@@ -1,6 +1,5 @@
 import axios from "axios";
 
-/* -- Pesquisa livros pelo nome -- */
 export async function searchBooks(nome: string) {
     const response = await axios.get(
         "https://www.googleapis.com/books/v1/volumes",
@@ -20,8 +19,6 @@ export async function searchBooks(nome: string) {
         descricao: book.volumeInfo.description,
     }));
 }
-
-/* -- Busca pelo ID -- */
 
 export async function searchBookById(id: string) {
     const response = await axios.get(
