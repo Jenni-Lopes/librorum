@@ -22,6 +22,7 @@ export default function Cadastro() {
         e.preventDefault();
 
         const result = cadastroSchema.safeParse({
+            nome,
             email,
             senha,
             confSenha
