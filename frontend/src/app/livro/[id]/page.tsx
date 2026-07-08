@@ -50,6 +50,7 @@ export default function BookDetailsPage({ params }: { params: Promise<{ id: stri
           description: removeHtml(data.descricao),
         });
 
+        {/* o livro atual já foi salvo pelo usuário? */}
         const biblioteca = await listarBiblioteca();
         const livroSalvo = biblioteca.find((livro) => livro.googleBookId === bookId);
 
