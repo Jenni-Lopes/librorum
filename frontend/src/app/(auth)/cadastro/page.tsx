@@ -77,7 +77,7 @@ export default function Cadastro() {
 
                         {/* E-mail */}
                         <div className="w-full">
-                            <label className="font-spartan block text-3xl font-regular text-[#F5F3FF] mb-1">
+                            <label className="font-spartan block text-3xl font-regular text-[#F5F3FF] mb-6">
                                 E-mail
                             </label>
 
