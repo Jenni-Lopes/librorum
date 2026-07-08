@@ -134,3 +134,4 @@ Siga as instruções abaixo para preparar o ambiente e rodar o projeto localment
 - **Jennifer Lopes** - [GitHub Profile](https://github.com/Jenni-Lopes)
 - **Júlia Garcia** - [GitHub Profile](https://github.com/juliagarcias)
 - **Yasmin Araújo** - [GitHub Profile](https://github.com/Y-Yasmin)
+
