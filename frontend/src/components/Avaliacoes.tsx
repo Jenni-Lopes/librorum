@@ -18,7 +18,7 @@ export default function Avaliacoes({ reviews }: AvaliacoesProps) {
   return (
     <div className="bg-[#181424] border border-[#3b2d63] rounded-3xl p-6 mt-10 shadow-xl">
       
-      {/* Header das avaliações */}
+      
       <div className="flex justify-between items-center border-b border-[#3b2d63]/40 pb-5 mb-6">
         <h2 className="text-lg font-bold font-lexend text-white flex items-baseline gap-2">
           Avaliações dos leitores
@@ -36,7 +36,7 @@ export default function Avaliacoes({ reviews }: AvaliacoesProps) {
             {/* Info do usuário, data e estrelas */}
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-3">
-                {/* Mock Avatar */}
+                
                 <div className="w-9 h-9 rounded-full bg-linear-to-tr from-[#3b2d63] to-[#8c52ff]/60 flex items-center justify-center text-white font-bold font-lexend text-xs">
                   {review.user[0].toUpperCase()}
                 </div>
@@ -46,7 +46,7 @@ export default function Avaliacoes({ reviews }: AvaliacoesProps) {
                 </div>
               </div>
 
-              {/* Estrelas */}
+              
               <div className="flex gap-0.5">
                 {[1, 2, 3, 4, 5].map((starIdx) => (
                   <Star 
@@ -61,7 +61,7 @@ export default function Avaliacoes({ reviews }: AvaliacoesProps) {
               </div>
             </div>
 
-            {/* Texto da avaliação */}
+            
             <p className="text-sm text-[#A5A1B8] font-spartan leading-relaxed mt-3">
               {review.text}
             </p>

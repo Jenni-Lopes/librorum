@@ -105,7 +105,7 @@ export default function Biblioteca() {
   const lidosList = biblioteca.filter((book) => book.status === "FINISHED");
   const abandonadosList = biblioteca.filter((book) => book.status === "DROPPED");
 
-  // Template comum de estado vazio
+  // Estado vazio
   const padraoEmptyState = (
     <div className="flex flex-col items-center justify-center py-10 bg-[#181424] border border-[#3b2d63] rounded-2xl text-center">
       <p className="text-sm text-[#A5A1B8] font-spartan">Nenhum livro nesta seção.</p>
@@ -174,7 +174,7 @@ export default function Biblioteca() {
         </div>
 
         <div className="flex flex-col gap-10">
-          {/* Prateleira: Quero ler */}
+          {/* Quero ler */}
           {(activeTab === "livros" || activeTab === "quero-ler") && (
             <SecaoLivros
               titulo="Quero ler"
@@ -185,7 +185,7 @@ export default function Biblioteca() {
             />
           )}
 
-          {/* Prateleira: Lendo */}
+          {/* Lendo */}
           {(activeTab === "livros" || activeTab === "lendo") && (
             <SecaoLivros
               titulo="Lendo"
@@ -196,7 +196,7 @@ export default function Biblioteca() {
             />
           )}
 
-          {/* Prateleira: Lidos */}
+          {/* Lidos */}
           {(activeTab === "livros" || activeTab === "lidos") && (
             <SecaoLivros
               titulo="Lidos"
@@ -207,7 +207,7 @@ export default function Biblioteca() {
             />
           )}
 
-          {/* Prateleira: Abandonados */}
+          {/* Abandonados */}
           {activeTab === "abandonados" && (
             <SecaoLivros
               titulo="Abandonados"

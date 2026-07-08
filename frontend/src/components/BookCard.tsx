@@ -16,7 +16,7 @@ export default function BookCard({ book, onRemove }: BookCardProps) {
       <Link href={`/livro/${book.googleBookId}`} className="block cursor-pointer">
         {/* Capa do Livro */}
         <div className="relative aspect-2/3 w-full max-w-40 mx-auto rounded-xl overflow-hidden border border-[#3b2d63]/50 shadow-md">
-          {book.imagem ? (
+          {imagem ? (
             <Image
               src={imagem}
               alt={book.titulo}
@@ -47,18 +47,6 @@ export default function BookCard({ book, onRemove }: BookCardProps) {
           </span>
         </div>
 
-        {/* Progresso de leitura (apenas se o status for READING) */}
-        {book.status === "READING" && (
-          <div className="mt-3.5">
-            <div className="flex justify-between items-center text-[10px] font-spartan font-semibold text-[#A5A1B8] mb-1">
-              <span>{book.percentual}%</span>
-              <span className="opacity-80">{book.percentual}% concluído</span>
-            </div>
-            <div className="w-full bg-[#271E42] rounded-full h-1.5 overflow-hidden">
-              <div className="bg-linear-to-r from-[#00E5FF] to-[#8c52ff] h-full rounded-full" style={{ width: `${book.percentual}%` }}></div>
-            </div>
-          </div>
-        )}
       </Link>
 
       {/* Botão Remover */}

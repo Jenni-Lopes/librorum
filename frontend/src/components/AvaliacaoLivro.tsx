@@ -62,7 +62,7 @@ export default function AvaliacaoLivro({
         })}
       </div>
 
-      {/* Botão de abrir form de avaliação */}
+      {/* Botão de abrir para avaliação do livro */}
       <button 
         onClick={() => setShowReviewForm(!showReviewForm)}
         className="w-full bg-[#8c52ff] hover:bg-[#7a44eb] text-white font-lexend font-semibold text-xs py-3 px-4 rounded-2xl transition-all shadow-[0_4px_12px_rgba(140,82,255,0.25)] hover:shadow-[0_4px_16px_rgba(140,82,255,0.4)] cursor-pointer text-center"
@@ -70,7 +70,7 @@ export default function AvaliacaoLivro({
         Escrever uma avaliação
       </button>
 
-      {/* Formulário Colapsável de Nova Avaliação */}
+      {/* Escrever Avaliação */}
       {showReviewForm && (
         <form onSubmit={onSubmitReview} className="mt-4 flex flex-col gap-3 pt-4 border-t border-[#3b2d63]/40">
           <div className="flex flex-col gap-1">

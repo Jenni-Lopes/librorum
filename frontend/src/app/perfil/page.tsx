@@ -58,18 +58,13 @@ function CartaoEstatistica({ titulo, valor, icone: Icone }: CartaoEstatisticaPro
 }
 
 export default function PerfilPage() {
-  const [usuario, setUsuario] = useState<Usuario | null>(null);
+  const [usuario] = useState<Usuario | null>(getUsuario);
   const [abaAtiva, setAbaAtiva] = useState<AbaPerfil>("metas");
   const [meta, setMeta] = useState("");
   const [biblioteca, setBiblioteca] = useState<LivroBiblioteca[]>([]);
   const [resenhas, setResenhas] = useState<ReviewApi[]>([]);
 
   useEffect(() => {
-    const user = getUsuario();
-    if (user) {
-      setUsuario(user);
-    }
-
     async function carregarDadosPerfil() {
       try {
         const [livros, avaliacoes, metaAtual] = await Promise.all([
