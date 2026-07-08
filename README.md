@@ -15,7 +15,7 @@ Adicione aqui as imagens do sistema para ilustrar o funcionamento da aplicação
 
 
 ### 2. Biblioteca Virtual (Painel Principal)
-*Exibição dos livros salvos na coleção do usuário, com indicador de progresso percentual, nota pessoal e status de leitura (Quero Ler, Lendo, Lido, Abandonado).*
+*Exibição dos livros salvos na coleção do usuário, com nota pessoal e status de leitura (Quero Ler, Lendo, Lido, Abandonado).*
 
 
 
@@ -26,20 +26,6 @@ Adicione aqui as imagens do sistema para ilustrar o funcionamento da aplicação
 
 ### 4. Resenhas (Reviews) e Metas de Leitura
 *Espaço para acompanhar as metas de leitura e gerenciar o CRUD de avaliações escritas de cada livro.*
-
-
----
-
-## ⚙️ Critérios e Requisitos Técnicos Atendidos
-
-* **Aplicação Web:** Executa diretamente no navegador com interface reativa.
-* **Tela de Login e Cadastro de Usuário(a):** Validações com a biblioteca Zod (campos obrigatórios, e-mail válido, senhas com confirmação e mínimo de 4 caracteres).
-* **Rotas Privadas:** Bloqueio de acesso forçado utilizando tokens de validação baseados em **JSON Web Tokens (JWT)**.
-* **Framework Frontend:** Next.js (React).
-* **Framework Backend:** Node.js com Express e TypeScript.
-* **CRUD Completo:** Implementação de operações de Criar, Ler, Atualizar e Deletar (CRUD) de livros, metas e avaliações utilizando o banco de dados **SQLite** configurado através do **Prisma ORM**.
-* **E-mail Único:** Validação no banco de dados e no servidor para garantir a unicidade de e-mail no cadastro de usuários.
-* **Integração com API Externa:** Busca dinâmica de dados integrando-se com a API do **Google Books**.
 
 ---
 
@@ -81,12 +67,6 @@ librorum/
 
 Siga as instruções abaixo para preparar o ambiente e rodar o projeto localmente.
 
-### Pré-requisitos
-Instale em seu computador:
-1. [Node.js](https://nodejs.org/) 
-2. O gerenciador de pacotes NPM (instalado por padrão com o Node.js).
-
----
 
 ### Passo 1: Configurando o Backend
 

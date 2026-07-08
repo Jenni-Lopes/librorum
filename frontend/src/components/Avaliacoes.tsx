@@ -1,4 +1,4 @@
-import { Star, ChevronDown} from "lucide-react";
+import { Star } from "lucide-react";
 
 interface Review {
   id: number;
@@ -26,15 +26,6 @@ export default function Avaliacoes({ reviews }: AvaliacoesProps) {
             {reviews.length} avaliações
           </span>
         </h2>
-
-        {/* Ordenação */}
-        <div className="flex items-center gap-2 text-xs text-[#A5A1B8] font-spartan">
-          <span>Ordenar por:</span>
-          <button className="flex items-center gap-1 text-white font-medium hover:text-[#8c52ff] transition-all cursor-pointer">
-            <span>Mais recentes</span>
-            <ChevronDown className="w-3.5 h-3.5" />
-          </button>
-        </div>
       </div>
 
       {/* Lista de Avaliações */}

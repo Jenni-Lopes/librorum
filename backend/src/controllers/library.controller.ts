@@ -9,19 +9,9 @@ import {
 } from "../services/library.service";
 import { AuthPayload } from "../tipos/auth-payload";
 
-const STATUS_VALIDOS = Object.values(ReadingStatus);
-
 function getUsuarioId(res: Response) {
     const usuario = res.locals.user as AuthPayload | undefined;
     return usuario?.id;
-}
-
-function isStatusValido(status: unknown): status is ReadingStatus {
-    return typeof status === "string" && STATUS_VALIDOS.includes(status as ReadingStatus);
-}
-
-function isNotaValida(nota: unknown): nota is number {
-    return typeof nota === "number" && nota >= 1 && nota <= 5;
 }
 
 export async function minhaBiblioteca(_req: Request, res: Response) {
@@ -88,18 +78,6 @@ export async function adicionarLivro(req: Request, res: Response) {
             });
         }
 
-        if (status && !isStatusValido(status)) {
-            return res.status(400).json({
-                erro: "Status de leitura invalido.",
-            });
-        }
-
-        if (nota !== undefined && !isNotaValida(nota)) {
-            return res.status(400).json({
-                erro: "Nota invalida.",
-            });
-        }
-
         const livro = await adicionarLivroService(
             googleBookId,
             userId,
@@ -130,12 +108,6 @@ export async function atualizarStatus(req: Request, res: Response) {
         if (!userId) {
             return res.status(401).json({
                 erro: "Usuario nao autenticado.",
-            });
-        }
-
-        if (!isStatusValido(status)) {
-            return res.status(400).json({
-                erro: "Status de leitura invalido.",
             });
         }
 

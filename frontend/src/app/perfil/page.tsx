@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
+import CardResenhaPerfil from "@/components/CardResenhaPerfil";
 import { buscarMetaAtual, salvarMetaAtual } from "@/services/goal";
 import { listarBiblioteca, LivroBiblioteca } from "@/services/book";
 import { deletarAvaliacao, listarMinhasAvaliacoes, ReviewApi } from "@/services/review";
@@ -13,7 +14,6 @@ import {
   CheckCircle2,
   Star,
   Target,
-  Trash2,
 } from "lucide-react";
 
 type Usuario = {
@@ -47,10 +47,6 @@ function getUsuario(): Usuario | null {
   }
 }
 
-function formatarData(value: string) {
-  return new Intl.DateTimeFormat("pt-BR").format(new Date(value));
-}
-
 function CartaoEstatistica({ titulo, valor, icone: Icone }: CartaoEstatisticaProps) {
   return (
     <div className="bg-[#0F0C18] border border-[#3b2d63] rounded-lg p-3 text-center">
@@ -62,15 +58,18 @@ function CartaoEstatistica({ titulo, valor, icone: Icone }: CartaoEstatisticaPro
 }
 
 export default function PerfilPage() {
-  const [usuario] = useState<Usuario | null>(getUsuario);
+  const [usuario, setUsuario] = useState<Usuario | null>(null);
   const [abaAtiva, setAbaAtiva] = useState<AbaPerfil>("metas");
   const [meta, setMeta] = useState("");
   const [biblioteca, setBiblioteca] = useState<LivroBiblioteca[]>([]);
   const [resenhas, setResenhas] = useState<ReviewApi[]>([]);
-  const [carregando, setCarregando] = useState(true);
-  const [salvandoMeta, setSalvandoMeta] = useState(false);
 
   useEffect(() => {
+    const user = getUsuario();
+    if (user) {
+      setUsuario(user);
+    }
+
     async function carregarDadosPerfil() {
       try {
         const [livros, avaliacoes, metaAtual] = await Promise.all([
@@ -84,8 +83,6 @@ export default function PerfilPage() {
         setMeta(metaAtual.target ? String(metaAtual.target) : "");
       } catch (error) {
         console.error("Erro ao carregar dados do perfil:", error);
-      } finally {
-        setCarregando(false);
       }
     }
 
@@ -128,18 +125,10 @@ export default function PerfilPage() {
     }
 
     try {
-      setSalvandoMeta(true);
-      const metaSalva = await salvarMetaAtual(valorMeta);
-      setMeta(String(metaSalva.target));
-      window.dispatchEvent(
-        new CustomEvent("librorum:meta-atualizada", {
-          detail: { target: metaSalva.target },
-        })
-      );
+      await salvarMetaAtual(valorMeta);
+      window.location.reload();
     } catch (error) {
       console.error("Erro ao salvar meta:", error);
-    } finally {
-      setSalvandoMeta(false);
     }
   }
 
@@ -151,7 +140,7 @@ export default function PerfilPage() {
         <Header />
 
         <section className="bg-[#181424] border border-[#3b2d63] rounded-xl p-5 mb-6">
-          <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex justify-between items-center gap-5">
             <div className="flex items-center gap-4">
               <div className="w-20 h-20 rounded-full border border-[#8c52ff] bg-[#271E42] flex items-center justify-center text-white font-bold text-2xl">
                 {nome[0]?.toUpperCase()}
@@ -163,12 +152,12 @@ export default function PerfilPage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
+            <div className="grid grid-cols-4 gap-3">
               {estatisticas.map((estatistica) => (
                 <CartaoEstatistica
                   key={estatistica.titulo}
                   {...estatistica}
-                  valor={carregando ? "..." : estatistica.valor}
+                  valor={estatistica.valor}
                 />
               ))}
             </div>
@@ -211,10 +200,9 @@ export default function PerfilPage() {
               <button
                 type="button"
                 onClick={handleSalvarMeta}
-                disabled={salvandoMeta}
-                className="bg-[#8c52ff] hover:bg-[#7a44eb] disabled:opacity-60 text-white font-semibold text-sm px-4 py-2.5 rounded-lg transition-colors cursor-pointer"
+                className="bg-[#8c52ff] hover:bg-[#7a44eb] text-white font-semibold text-sm px-4 py-2.5 rounded-lg transition-colors cursor-pointer"
               >
-                {salvandoMeta ? "Salvando..." : "Salvar"}
+                Salvar
               </button>
             </div>
 
@@ -237,11 +225,7 @@ export default function PerfilPage() {
           <section className="bg-[#181424] border border-[#3b2d63] rounded-xl p-5">
             <h2 className="text-lg font-bold text-white mb-4">Minhas resenhas</h2>
 
-            {carregando && (
-              <p className="text-sm text-[#A5A1B8]">Carregando resenhas...</p>
-            )}
-
-            {!carregando && resenhas.length === 0 && (
+            {resenhas.length === 0 && (
               <div className="border border-dashed border-[#3b2d63] rounded-xl p-6 text-center">
                 <Star size={32} className="text-[#8c52ff] mx-auto mb-3" />
                 <p className="text-sm font-semibold text-white">Nenhuma resenha publicada ainda.</p>
@@ -251,7 +235,7 @@ export default function PerfilPage() {
               </div>
             )}
 
-            {!carregando && resenhas.length > 0 && (
+            {resenhas.length > 0 && (
               <div className="flex flex-col gap-4">
                 {resenhas.map((resenha) => {
                   const livro = biblioteca.find(
@@ -259,47 +243,12 @@ export default function PerfilPage() {
                   );
 
                   return (
-                    <article
+                    <CardResenhaPerfil
                       key={resenha.id}
-                      className="border border-[#3b2d63] bg-[#0F0C18] rounded-xl p-4"
-                    >
-                      <div className="flex items-start justify-between gap-4">
-                        <div>
-                          <h3 className="text-sm font-semibold text-white">
-                            {livro?.titulo ?? "Livro avaliado"}
-                          </h3>
-                          <p className="text-[11px] text-[#A5A1B8] mt-1">
-                            {formatarData(resenha.updatedAt)}
-                          </p>
-                        </div>
-
-                        <div className="flex gap-0.5">
-                          {[1, 2, 3, 4, 5].map((estrela) => (
-                            <Star
-                              key={estrela}
-                              className={`w-4 h-4 ${
-                                estrela <= resenha.rating
-                                  ? "fill-[#8c52ff] text-[#8c52ff]"
-                                  : "text-[#3b2d63]"
-                              }`}
-                            />
-                          ))}
-                        </div>
-                      </div>
-
-                      <p className="text-sm text-[#A5A1B8] leading-relaxed mt-3">
-                        {resenha.text}
-                      </p>
-
-                      <button
-                        type="button"
-                        onClick={() => handleDeletarResenha(resenha.id)}
-                        className="mt-4 inline-flex items-center gap-2 text-xs text-[#A5A1B8] hover:text-[#ef4444] transition-colors cursor-pointer"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                        Remover resenha
-                      </button>
-                    </article>
+                      resenha={resenha}
+                      livro={livro}
+                      onDelete={handleDeletarResenha}
+                    />
                   );
                 })}
               </div>
