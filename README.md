@@ -84,7 +84,7 @@ Siga as instruções abaixo para preparar o ambiente e rodar o projeto localment
    ```
 
 3. Configure o arquivo de variáveis de ambiente:
-   Crie ou edite o arquivo `.env` na raiz da pasta `/backend` e adicione o seguinte conteúdo:
+   Crie ou edite o arquivo `.env` na raiz da pasta `/backend` e substitua o conteúdo pelo seguinte:
    ```env
    # URL de conexão com o banco de dados SQLite local
    DATABASE_URL="file:./app.db"
